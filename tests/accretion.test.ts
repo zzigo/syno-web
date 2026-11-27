@@ -77,3 +77,5 @@ test('identical descendants cannot hide behind defaults, wrappers, names or form
  // Deliberate unisons in handwritten scores remain valid; this rule governs adopted descendants.
  assert.deepEqual(compile('s s s').diagnostics,[]);
 });
+
+test('complete model proposals cannot reintroduce duplicate descendants through Apply',async()=>{const {duplicateProposalDescendant}=await import('../src/core/agent-proposal');assert.match(duplicateProposalDescendant('A&s','A&s s s',3181)??'',/duplicate/);assert.match(duplicateProposalDescendant('A&s',"A&s copy=(s440v3e0253'1p0r0) copy",3181)??'',/duplicate/);assert.equal(duplicateProposalDescendant('A&s','A&s t440',3181),undefined);assert.equal(duplicateProposalDescendant('A&s s','A&s s t440',3181),undefined);assert.equal(duplicateProposalDescendant('s','s s',3181),undefined);});

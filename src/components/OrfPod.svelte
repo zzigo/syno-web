@@ -1,4 +1,5 @@
 <script lang="ts">
+  import {duplicateProposalDescendant} from '../core/agent-proposal';
   import {compactAgentNumbers} from '../core/agent-numbers';
   import {chooseDefaultModel} from '../integrations/default-model';
   import {inferenceRetry} from '../integrations/agent-retry';
@@ -119,6 +120,7 @@
   async function apply(){
     if(busy||validation.diagnostics.length)return;
     const currentSource=session.source;
+    const duplicate=duplicateProposalDescendant(currentSource,proposed,session.seed);if(duplicate){status=duplicate;return;}
     history.push({model,runId,requestSource:before,rawResponse:output,sourceBefore:currentSource,sourceAfter:proposed,beforeHash:await sha256(compile(currentSource,session.seed).canonical),afterHash:await sha256(validation.canonical),seed:session.seed});
     replaceSource(proposed,'Agent proposal');status='Proposal applied to editor. Cmd+Enter to play.';
   }
