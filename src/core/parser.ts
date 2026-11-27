@@ -1,3 +1,4 @@
+import {normalizeScoreSeparators} from './score-separators';
 import {alignApomicticMotif} from './apomixis';
 import {speakerPreset} from './speaker-presets';
 import {validateSpeakers,type Speaker,type SpatialPan} from './spatial';
@@ -19,6 +20,7 @@ type Value=Argument|{choices:number[]};
 interface Setting {followGate?:boolean;random?:([number,number]|undefined)[]; value: Value; end?: Value; duration?: number; exponential?:boolean; contour?:{values:Value[];times:(number|undefined)[]};sequence?:Sequence }
 interface SpatialSetting {mode:'xyz'|'outputs';values:Setting[];route?:number[]}
 type Ast = Range & (
+  | {kind:'shift';nodes:Ast[];offset:number}
   | {kind:'rest';nodes:Ast[];chance:number}
   | {kind:'speakerPreset';key:string}
   | {kind:'room';room:import('./spatial').Room}
@@ -29,7 +31,7 @@ type Ast = Range & (
   | { kind:'lsystem'; iterations:number; axiom?:string; angle?:number;taper?:number; headerTo:number; rules:(RewriteRule&Range)[]; bindings:({symbol:string;name:string;args:number[]}&Range)[] }
   | {kind:'config';bpm?:number;mode?:SequenceMode;tuning?:Tuning;root?:Argument;map?:string;walk?:string;input?:{channel:number;gain:number};future?:{name:string;every:number;count:number;shift:number}}
   | { kind: 'view'; mode: VisualMode }
-  | { kind: 'loop'; nodes: Ast[]; count: number; scoped?:boolean;period?:number;mutation?:import('./mutation').MutationRegion }
+  | { kind: 'loop'; nodes: Ast[]; count: number; repeatRandom?:RandomSpec; scoped?:boolean;period?:number;mutation?:import('./mutation').MutationRegion }
   | {kind:'bus';nodes:Ast[];effects:(BusEffect&{setting?:Setting;spatialSetting?:SpatialSetting})[];volume?:Setting;duration?:number}
   | {kind:'feedback';nodes:Ast[];delay:Setting;delayRight?:Setting;gain:Setting;gainRight?:Setting;filter:Setting;volume:Setting;cross:number;crossSetting?:Setting;band?:[Setting,Setting];rq?:[Setting,Setting];drive?:Setting;filterExplicit?:boolean;duration?:number}
   | { kind: 'definition'; name: string; nodes: Ast[]; parameters: number }
@@ -113,7 +115,9 @@ class Reader {
     const tempoBefore=this.tempo;const nodes: Ast[] = [];
     this.spaces();
     while (this.p < this.text.length && (!end || this.peek() !== end)) {
-      const from = this.p; const ch = this.peek();
+      const from = this.p; let ch = this.peek();
+      const groupDelay=this.text.slice(this.p).match(/^(\d+(?:\.\d*)?|\.\d+)(?=\()/);
+      if(groupDelay){this.p+=groupDelay[0].length;ch='(';}
       const prefix=this.text.slice(this.p).match(/^([GASHRK])(\d{3})?(?:@([pofvrhdig_]{3})(?:\/(born|dfs|bfs|nnb))?)?(&)?[ \t]*\(/);
       const bareAgent=this.text.slice(this.p).match(/^([GASHRKL])(\d{3})?(?:@([pofvrhdig_]{3})(?:\/(born|dfs|bfs|nnb))?)?&[ \t]*(?![ \t]*\()/);
       const agentL=ch==='L'&&/^L&[ \t]*\(/.test(this.text.slice(this.p));
@@ -189,14 +193,16 @@ class Reader {
       } else if(ch==='L'){
         nodes.push(this.lsystem());
       } else if (ch === '(') {
-        this.p++; const children = this.nodes(')', depth + 1);
+        const groupBodyFrom=++this.p; const children = this.nodes(')', depth + 1);
         if (this.peek() !== ')') this.error('Missing closing parenthesis.');
-        const bodyTo=this.p;this.p++; const count = this.number(false);
+        const bodyTo=this.p;this.p++; const repeatRandom=this.peek()==='?'?this.randomSpec([1,9],[1,128]):undefined;
+        const repeatValues=repeatRandom&&('choices'in repeatRandom?repeatRandom.choices:repeatRandom.range);if(repeatValues?.some(v=>!Number.isInteger(v)))this.error('Random repeat counts must be integers from 1 to 128.');
+        const count = repeatRandom?undefined:this.number(false);
         if (count !== undefined && (!Number.isInteger(count) || count < 1 || count > 128)) this.error('Repeat count must be an integer from 1 to 128.');
         let period:number|undefined;
-        if(this.peek()==="'"){this.p++;period=this.time();if(depth!==0||count!==undefined)this.error('A recurring period belongs on one uncounted root loop.');if(!(period!>=.025&&period!<=86400))this.error('Loop period must be 0.025–86400 seconds.');}
-        let mutation:import('./mutation').MutationRegion|undefined;const agent=this.peek()==='&';if(agent)this.p++;if(agent||/[GASHRKL]/.test(this.peek())&&this.peek()){const algorithm=this.peek();if(!'GASHRKL'.includes(algorithm)||!algorithm)this.error('Mutation suffix uses G/A/S/H/R/K/L, optionally preceded by & for AI.');this.p++;mutation={from:from+1,to:bodyTo,algorithm:algorithm as import('./mutation').MutationAlgorithm,agent};}
-        const group:Ast={kind:'loop',from,to:this.p,nodes:children,count:count??0,period,mutation};
+        if(this.peek()==="'"){this.p++;period=this.time();if(depth!==0||count!==undefined||repeatRandom)this.error('A recurring period belongs on one uncounted root loop.');if(!(period!>=.025&&period!<=86400))this.error('Loop period must be 0.025–86400 seconds.');}
+        let mutation:import('./mutation').MutationRegion|undefined;const agent=this.peek()==='&';if(agent)this.p++;if(agent||/[GASHRKL]/.test(this.peek())&&this.peek()){const algorithm=this.peek();if(!'GASHRKL'.includes(algorithm)||!algorithm)this.error('Mutation suffix uses G/A/S/H/R/K/L, optionally preceded by & for AI.');this.p++;mutation={from:groupBodyFrom,to:bodyTo,algorithm:algorithm as import('./mutation').MutationAlgorithm,agent};}
+        const group:Ast={kind:'loop',from,to:this.p,nodes:children,count:count??0,repeatRandom,period,mutation};
         const effects:(BusEffect&{setting?:Setting;spatialSetting?:SpatialSetting})[]=[];let lifetime:number|undefined;
         while(this.peek()&&'vrhd'.includes(this.peek())){
           const op=this.peek();this.p++;let setting:Setting;
@@ -241,6 +247,7 @@ class Reader {
         } else {if(delayed)this.p=from;nodes.push(this.sound(depth));}
       }
       if(this.peek()==='~'){this.p++;let chance=1;if(this.peek()==='?'){this.p++;const digit=this.text.slice(this.p).match(/^\d/)?.[0];chance=digit===undefined?.5:Number(digit)/10;if(digit)this.p++;}const child=nodes.pop()!;nodes.push({kind:'rest',nodes:[child],chance,from:child.from,to:this.p});}
+      if(groupDelay){const child=nodes.pop()!;nodes.push({kind:'shift',nodes:[child],offset:Number(groupDelay[0]),from,to:this.p});}
       if (nodes.length > 2048) this.error('Score exceeds the 2048-statement budget.');
       if (this.p === from) this.error('Unexpected input.');
       if (nodes.at(-1)?.kind==='control'&&/[A-Z0-9a-z?]/.test(this.peek())&&this.peek()){this.spaces();continue;}
@@ -415,7 +422,7 @@ class Reader {
 const modes: Record<string, string> = { G: 'phyllotaxis', A: 'apomixis', S: 'stolon', H: 'apical', R: 'tropism', K: 'colonisation' };
 export const MAX_EVENTS = 2048;
 export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, allowSilence = false): CompiledScore {
-  const stripped=stripScoreComments(source);
+  const stripped=stripScoreComments(normalizeScoreSeparators(source));
   const canonical = /!sx(?:\s|$)/.test(stripped)?stripped.trim():stripped.trim().replace(/\s+/g,' ');
   const result: CompiledScore = { events: [], feedback:[], outputBuses:[], duration: 0, canonical, seed: seed >>> 0, generator: null, visualization:'cube', viewMessages:[], lSystems:[], diagnostics: [] };
   if (source.length > 64000) return { ...result, diagnostics: [{ from: 0, to: source.length, message: 'Score exceeds 64,000 characters.' }] };
@@ -425,7 +432,7 @@ export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, all
   let workBudget = 20000,growthInstance=0;
   const inputGains:Record<number,number>={};
   let sequenceMode:SequenceMode='continuous',tuning:Tuning|undefined,root=110,map:string|undefined,walk='born';
-  let apomicticScopeDepth=0,restDraw=0;
+  let apomicticScopeDepth=0,restDraw=0,repeatDraw=0;
   let parameterDraw=0,sequenceDraw=0,inheritedGate:number|undefined;
   const futures:{name:string;every:number;count:number;shift:number}[]=[];
   const fail = (n: Range, message: string): never => { throw new SyntaxIssue(n.from, n.to, message); };
@@ -455,6 +462,7 @@ export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, all
       if(n.kind==='speakers'||n.kind==='speakerPreset'||n.kind==='room')continue;
       if(n.kind==='title'){result.title=n.text;continue;}
       if(n.kind==='section'){base=finish+n.wait;if(n.name)(result.sections??=[]).push({name:n.name,t:base,from:n.from,to:n.to});if(base>MAX_TIME_SECONDS)fail(n,'Section time exceeds 86400 seconds.');finish=base;continue;}
+      if(n.kind==='shift'){finish=Math.max(finish,emit(n.nodes,base+n.offset,args,call,depth+1));continue;}
       if(n.kind==='rest'){const first=result.events.length;const key=restDraw++,stop=emit(n.nodes,base,args,call,depth+1);for(const e of result.events.slice(first))e.restGates=[...(e.restGates??[]),{key,chance:n.chance}];finish=Math.max(finish,stop);continue;}
       if(n.kind==='config'){if(n.bpm)(result.tempos??=[]).push({bpm:n.bpm,t:base,from:n.from,to:n.to});if(n.input)inputGains[n.input.channel]=n.input.gain;if(n.mode)sequenceMode=n.mode;if(n.tuning)tuning=n.tuning;if(n.root!==undefined){const value=typeof n.root==='number'?n.root:args[n.root.parameter];if(!Number.isFinite(value)||value<20||value>12000)fail(n,'Root argument o must be 20–12000 Hz.');root=value;}if(n.map)map=n.map;if(n.walk)walk=n.walk;continue;}
       if(n.kind==='bus'){
@@ -565,13 +573,15 @@ export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, all
         if(n.mutation){result.mutations??=[];if(!result.mutations.some(r=>r.from===n.mutation!.from&&r.to===n.mutation!.to))result.mutations.push(n.mutation);}
         if(n.period!==undefined){if(result.period!==undefined)fail(n,'Only one recurring root loop is supported.');result.period=n.period;}
         // A timed root loop can restart while its preceding notes still sound.
+        let repeats=n.count||1;
+        if(n.repeatRandom){result.randomTimeSource=source;const spec=n.repeatRandom,draw=durationForCycle([0,1],result.seed,450000+repeatDraw++,cycle);repeats='choices'in spec?spec.choices[Math.min(spec.choices.length-1,Math.floor(draw*spec.choices.length))]:Math.min(spec.range[1],spec.range[0]+Math.floor(draw*(spec.range[1]-spec.range[0]+1)));}
         const firstScopedEvent=result.events.length;
         const apomicticScope=apomicticScopeDepth===0&&n.scoped&&!n.mutation&&n.nodes[0]?.kind==='control'&&n.nodes[0].operator==='A';
         let loopEnd = base;
         const previous={count,mu,spread,growthMode,control,sequenceMode,tuning,root,map,walk};
-        const previousGate=inheritedGate;if(n.count>1)inheritedGate=undefined;
+        const previousGate=inheritedGate;if(repeats>1)inheritedGate=undefined;
         if(apomicticScope)apomicticScopeDepth++;
-        try{for (let i = 0; i < (n.count || 1); i++) loopEnd = emit(n.nodes, loopEnd, args, call, depth + 1);}
+        try{for (let i = 0; i < repeats; i++) loopEnd = emit(n.nodes, loopEnd, args, call, depth + 1);}
         finally{if(apomicticScope)apomicticScopeDepth--;inheritedGate=previousGate;if(n.scoped)({count,mu,spread,growthMode,control,sequenceMode,tuning,root,map,walk}=previous);}
         if(apomicticScope){const motif=result.events.slice(firstScopedEvent);alignApomicticMotif(motif,motif[0]?.growthInstance);loopEnd=Math.max(loopEnd,...motif.map(e=>e.t+e.dur));}
         finish = Math.max(finish, loopEnd); continue;
@@ -675,7 +685,7 @@ export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, all
     return finish;
   };
   try {
-    const reader = new Reader(source); const ast = reader.nodes();
+    const reader = new Reader(normalizeScoreSeparators(source)); const ast = reader.nodes();
   const rooms=ast.filter((n):n is Ast&{kind:'room'}=>n.kind==='room');if(rooms.length>1)fail(rooms[1],'Declare one room per score.');if(rooms.length)result.room=rooms[0].room;
   const presetNodes=ast.filter((n):n is Ast&{kind:'speakerPreset'}=>n.kind==='speakerPreset');
   const layoutNodes=ast.filter((n):n is Ast&{kind:'speakers'}=>n.kind==='speakers');

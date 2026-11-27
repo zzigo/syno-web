@@ -126,6 +126,7 @@ Individual signatures begin with [A · apomixis](docs/growth/A-apomixis.md); see
 | space / `,` | Interchangeable numeric-list separators; comma also separates function arguments and paired feedback controls. A comma does not imply a continuous random range. | `s?[110,220,440]` |
 | `~` | Rest cell inside a sequence; after a sound/group, a definite rest. | `s[220 ~ 330]`; `(s220 t330)~` |
 | `~?` | Probability of silence. Default 50%; digit 1…9 means 10…90%. Group members share one draw; time is retained. | `s220'0.4~?2` |
+| `\` | Statement/line separator, equivalent to a newline; no added wait. Preserved literally in lyrics, titles and comments. | `s220\t330` |
 | `( )` | Musical grouping/looping. A following integer is finite repetition; a following v/r/h/d is a shared processor chain. | `(s220'0.2)3`; `(s220 t330)r4h2` |
 | `{ }` | Shared audio bus; an explicit following g enables recursive audio feedback. Nesting composes buses/circuits. | `{s220 t330}p-1>1f5'4`; `{n1}d0.02g1.1` |
 | `=` | Define a named musical expression/function. Names have two or more lowercase letters/underscores. | `roll=(s220'0.2)` |
@@ -140,7 +141,7 @@ Individual signatures begin with [A · apomixis](docs/growth/A-apomixis.md); see
 | `!` | Message namespace: tempo, sequencing behavior, title, visual, room, speaker or input setup. | `!b120`; `!vc` |
 | `.` | Decimal point within a number. Cmd/Ctrl+. is the panic shortcut. | `v0.5` |
 
-Untimed transitions inherit an explicit gate: `s220v0>2>0e0p-1>1'4`. Independent explicitly written transition times remain useful and are valid. A leading onset and a trailing gate serve different purposes. Seconds and note values can coexist. A gate does not by itself create an arpeggiator: use a sequence or loop for repeated attacks.
+Untimed transitions inherit an explicit gate: `s220v0>2>0e0p-1>1'4`. Independent explicitly written transition times remain useful and are valid. A leading onset and a trailing gate serve different purposes. Onsets also prefix whole groups and their processors: `0.3(s220'0.4)2` starts at 0.3 s, then 0.7 s. `(sound)?` selects 1–9 integer repeats by default, seeded anew per loop. `)?[2 4 8]` selects listed counts; `)?[2:8]` selects an integer in the inclusive range. Explicit repeat counts and bounds are 1–128. A random repeat count cannot also declare a timed recurring root-loop period. Seconds and note values can coexist. A gate does not by itself create an arpeggiator: use a sequence or loop for repeated attacks.
 
 Random lists: `?[110 220 440]` chooses exactly those values; `?[110:880]` draws continuously within the interval; `?[110:]`, `?[:880]` and `?[:]` use contextual default bounds for omitted endpoints. Plain `[110 220]` is an ordered sequence. Random draws are seeded per loop.
 
@@ -257,6 +258,16 @@ New syNo instrument code: [0BSD](LICENSE). Reused generators, gateway SDK, runti
 The appendix below is generated from `src/core/help-content.ts`. It preserves detailed tables and examples alongside the concise character index above. The compiler and tests remain authoritative when older narrative notes differ.
 
 <!-- SYNO_HELP_START -->
+<details>
+<summary>Group onsets · finite and random repeats · backslash</summary>
+
+<h3>Delay a whole group</h3><pre>0.3(n1v1.5e0122f6r8p?'0.4~?4)2\
+0.3(n1v1.5e0122f6r8p?'0.4~?4)?\
+(s220'0.2)?[2 4 8]
+(s220'0.2)?[2:8]</pre><p>The onset before parentheses shifts the whole group, its finite repetitions and outer processor clocks. The first example starts at 0.3 and 0.7 seconds. A trailing backslash is a statement separator, equivalent to a newline, without adding a wait. Literal lyrics, titles and comments preserve backslashes.</p><p>? after a group chooses 1–9 repetitions by default, deterministically from seed and loop. Explicit choices or inclusive integer ranges use 1–128; use spaces/commas for choices, colon for a range. The repeat draw is distinct from ~?4, which gives each sound a 40% silence probability. A counted/random-count group cannot also declare a timed recurring root-loop period.</p>
+
+</details>
+
 <details>
 <summary>A · apomixis · capsules and inherited motifs</summary>
 
