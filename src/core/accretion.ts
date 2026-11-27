@@ -1,4 +1,5 @@
-import {agentNumber,compactAgentNumbers} from './agent-numbers';
+import {audibleIdentity} from './audible-identity';
+import {compactAgentNumbers} from './agent-numbers';
 import {compile,eventData} from './parser';
 import {filterHz} from '../audio/effects';
 import type {MutationRegion} from './mutation';
@@ -38,9 +39,8 @@ export function validateAccretion(source:string,region:MutationRegion,addition:s
   if(index===undefined||JSON.stringify(previous[i])!==JSON.stringify(next[index]))return reject('The addition changes existing music. Earlier voices, effects and timing must remain intact.');
  }
  const ids=new Set(before.events.map(e=>e.id)),added=after.events.filter(e=>!ids.has(e.id));
- const identity=(event:ReturnType<typeof eventData>[number])=>{const {volume,...music}=event;return JSON.stringify(music,(_key,value)=>typeof value==='number'?Number(agentNumber(value)):value);};
- const known=new Set(previous.map(identity));
- for(const event of after.events.map((e,i)=>({event:e,music:next[i]})).filter(({event})=>!ids.has(event.id))){const key=identity(event.music);if(known.has(key))return reject('Do not duplicate an existing voice with only a volume change. Change pitch, timbre, rhythm, pan or effects.');known.add(key);}
+ const known=new Set(before.events.map((e,i)=>audibleIdentity(e,previous[i])));
+ for(const {event,music}of after.events.map((event,i)=>({event,music:next[i]})).filter(({event})=>!ids.has(event.id))){const key=audibleIdentity(event,music);if(known.has(key))return reject('Rejected duplicate descendant: this voice already exists. Explicit defaults, variable names or volume-only changes are not a new musical gesture.');known.add(key);}
  if(!added.length||!added.some(e=>Math.max(e.volume.start,e.volume.end,...e.volume.points?.map(p=>p.value)??[])>0))return reject('Add at least one audible new event.');
  if(added.some(e=>e.inputChannel||e.feedbackBus!==undefined))return reject('New layers must use internal sound atoms outside feedback returns.');
  const levels=accretionLevels(source,region,seed),peaks=added.map(e=>Math.max(e.volume.start,e.volume.end,...e.volume.points?.map(p=>p.value)??[]));

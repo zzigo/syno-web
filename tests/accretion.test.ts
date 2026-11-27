@@ -67,3 +67,13 @@ test('incompatible streamed envelopes are diagnosed before metadata can consume 
  assert.equal(additionProtocolError('{"daughter":{','daughter'),undefined);
  assert.match(additionProtocolError('{"content":{','daughter')!,/daughter/);
 });
+
+test('identical descendants cannot hide behind defaults, wrappers, names or formatting',()=>{
+ const source='A&s',r=region(source);
+ for(const addition of ['s','s440',"s440v3e0253'1p0r0",'copy=(s) copy',"copy=(s440v3e0253'1p0r0) copy",'# extra whitespace\n  s  ']){const checked=validateAccretion(source,r,addition,3181);assert.equal(checked.ok,false,addition);if(!checked.ok)assert.match(checked.error,/duplicate/);}
+ assert.equal(validateAccretion(source,r,'t440',3181).ok,true);
+ assert.equal(validateAccretion(source,r,'s660',3181).ok,true);
+ assert.equal(validateAccretion(source,r,'t440 t440',3181).ok,false);
+ // Deliberate unisons in handwritten scores remain valid; this rule governs adopted descendants.
+ assert.deepEqual(compile('s s s').diagnostics,[]);
+});
