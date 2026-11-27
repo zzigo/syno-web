@@ -1,0 +1,5 @@
+# TROPISM · moving attractor
+# N 1–128 generations · U 0–1 mutation · D 0.1–3 spread
+!vc
+R N48 U0.12 D1.4
+t165v3e0255'0.2

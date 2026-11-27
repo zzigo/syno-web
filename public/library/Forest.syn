@@ -1,0 +1,8 @@
+# FOREST / three simultaneous, independently scoped growth processes.
+# Their local coordinate systems are packed into separate regions of the cube.
+# Pinch with two fingers to zoom; drag / three-finger touch to orbit.
+!vc
+canopy=(G N24 U0.06 D0.85 s110:t27.5i0.2>4'0.42v0>0.7>0'0.42e0p-0.7r3h0.3>1'0.42'0.42)
+roots=(K N24 U0.12 D1.1 n3v0>0.32>0'0.55e0f2>5'0.55p0r2h3>0.4'0.55'0.55)
+vines=(S N24 U0.08 D0.9 ?[t a]165v0>0.45>0'0.38e0f6>3'0.38p0.7r4h1.6>4'0.38'0.38)
+canopy roots vines

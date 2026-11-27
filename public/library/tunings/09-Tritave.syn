@@ -1,0 +1,5 @@
+# TUNINGS 09 / the period is 3/1; position 14 in BPJ reaches root * 3.
+# TRY u[1/1 5/4 3/2 7/4]:3/1 in right. Ratios are sorted by cents.
+left=(uBPJ o55 G N20 U0.06 D0.9 s110v0.7e0254'0.3p-0.6r3)
+right=(u[1/1 9/7 7/5 5/3 7/3]:3/1 o55 R N20 U0.1 D1 t110v0.6e0254'0.3p0.6r3)
+left right

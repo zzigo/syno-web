@@ -1,0 +1,5 @@
+# RHYTHM 02 / eight eighths = four beats. ~ consumes one step.
+# Remove one ~ or replace it with n4, keeping the eight positions.
+!b120 !sa
+uDOR o110
+t[n1 ~ 5 3 ~ 1 7 ~]v[2 0 1 1 0 2 1 0]e0254'n8

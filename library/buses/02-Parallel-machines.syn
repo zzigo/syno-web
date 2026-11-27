@@ -1,0 +1,13 @@
+# PARALLEL MACHINES / three instrument functions / nested serial and parallel buses.
+# The outer bus hears the MIX, so its effects really share one input.
+# Read the curly scopes from inside out; effects within a suffix are left-to-right.
+# f/p without times follow the complete child form; fixed delays remain in seconds.
+!b128 !sa
+kick=(s[55 ~ ~ ~ 55 ~ ~ ~]v3e0093'n16)
+roll=(n[1 ~ 1 1 ~ 1 1 1]v0.6e0002'n16f8)
+bass=(a[55 ~ 82.5 55]v0.8e0253'n8f3)
+
+{
+ {((kick roll)8)}f2>8p-0.7>0.7d0.1875r3
+ {((bass)8)}f5>2h0.2>3'7.5p0.7>-0.7r2
+}f8>3r4h1v7

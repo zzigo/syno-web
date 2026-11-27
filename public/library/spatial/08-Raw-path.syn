@@ -1,0 +1,8 @@
+# Co-located speakers 3 and 4 remain different raw outputs.
+# Three equal crossfades over nine seconds: 1 -> 4 -> 3 -> 2.
+# The 4 -> 3 gesture has no geometric travel, but changes the discrete destination.
+!t[Four wires, three places]
+!r[20 10 30]
+!spk[123 323 432 432]
+!vs
+s100v0>3>0'9e0p[o1>4>3>2]

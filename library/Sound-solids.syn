@@ -1,0 +1,9 @@
+# CUBE · SOUND SOLIDS
+# s sphere / t pyramid / a ramp / q cube / n Perlin-noise body.
+# Choose cube in the Editor to see the solids; points keeps its point layout.
+!vc
+s110v2p-0.9'12e0
+t220v2p-0.45'12e0
+a440v2p0'12e0
+q880v2p0.45'12e0
+n2v2p0.9'12e0

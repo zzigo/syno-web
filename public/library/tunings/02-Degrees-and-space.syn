@@ -1,0 +1,8 @@
+# TUNINGS 02 / n means a degree only inside a pitch list.
+# First hear the scale, then its quantized distribution on H.
+# TRY uPEN / uHEX / uDOR / u19. Negative degrees are allowed.
+!b100 !sa
+uPEN o165
+line=(s[n-4 1 2 3 4 5 6 1]v1e0254'n8)
+branch=(H N12 U0.08 D1 @pov/dfs 2.4t165v0.8e0254'0.25r2)
+line branch

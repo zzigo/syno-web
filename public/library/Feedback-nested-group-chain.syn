@@ -1,0 +1,9 @@
+# Nested composition: two feedback returns mix, chop together, then reverb, then fade.
+# () groups / repeats; postfix v/r/h/d process the complete mixed output in order.
+# {} with g closes an actual audio feedback loop. Nested () are composition, not recursion.
+(
+ (
+  {n2v0.03e0'0.05}d0.013g1.06f5.4x0.2v1.5'12
+  {t110:s27.5i6v0.1e0'0.2}d0.029g1.03f4.8x0.4v1.2'12
+ )h0.2>3'12r4
+)v9>0'18

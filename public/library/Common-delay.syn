@@ -1,0 +1,6 @@
+# COMMON DELAY
+# d3 = three seconds; repeats decay by 0.38 per return.
+# Turn LOOP off before Play to hear the echoes separately.
+# {s200v3'0.2e0}d3r4 applies delay then reverb to a shared bus.
+!vc
+s200v3'0.2e0d3

@@ -1,0 +1,7 @@
+# A shared raw crossfade after a complete feedback/effect chain.
+# Spatial p gathers this bus into one emitter; its internal feedback remains stereo.
+# Other bus effects preserve N lanes; spatial bus reverb is lane-wise mono.
+!t[A return between two objects]
+!spk[000 900 909 009]
+!vs
+{{n2v0.1'0.3e0}d0.017g1.05f5x0.3v1'6}h1r3p[o1>4]

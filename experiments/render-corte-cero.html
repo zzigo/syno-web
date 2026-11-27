@@ -1,0 +1,35 @@
+<!doctype html><meta charset="utf-8"><title>Corte-cero · native render</title>
+<button id="render" disabled>Render the complete piece</button><pre id="report">Loading score…</pre><a id="audio" hidden download="Corte-cero.wav">Download rendered WAV</a>
+<script type="module">
+import {compile} from '/src/core/parser.ts';
+import {AudioEngine} from '/src/audio/engine.ts';
+import {createFeedbackCircuit} from '/src/audio/feedback.ts';
+import {createOutputBus} from '/src/audio/output-bus.ts';
+const source=await (await fetch('/library/pieces/Corte-cero.syn')).text(),score=compile(source,3181);
+const report=document.querySelector('#report'),button=document.querySelector('#render');
+report.textContent=JSON.stringify({ready:!score.diagnostics.length,duration:score.duration,notes:score.events.length,diagnostics:score.diagnostics},null,2);button.disabled=!!score.diagnostics.length;
+button.onclick=async()=>{button.disabled=true;report.textContent='Rendering the complete score offline, including effect tails…';try{
+ const duration=120,sr=48000;
+ const ctx=new OfflineAudioContext(2,duration*sr,sr),engine=new AudioEngine();engine.context=ctx;engine.score=score;
+ const master=ctx.createGain(),limiter=ctx.createDynamicsCompressor();master.gain.value=.6;limiter.threshold.value=-12;limiter.knee.value=12;limiter.ratio.value=12;master.connect(limiter).connect(ctx.destination);engine.master=master;
+ const buses=new Map(),circuits=new Map();
+ for(const b of score.outputBuses)buses.set(b.id,createOutputBus(ctx,b,b.t,b.parent===undefined?master:buses.get(b.parent).input,amount=>engine.impulse(score.seed,amount)));
+ for(const c of score.feedback)circuits.set(c.id,createFeedbackCircuit(ctx,c,c.t,c.outputBus===undefined?master:buses.get(c.outputBus).input));
+ const scheduleBatch=(from,to)=>{
+  // Batch future notes so the normal voice budget remains active in offline rendering.
+  for(const voice of engine.voices)if(voice.at+voice.event.dur<from-.001)engine.voices.delete(voice);
+  for(const e of score.events)if(e.t>=from&&e.t<to)engine.schedule(e,e.t,e.feedbackBus!==undefined?circuits.get(e.feedbackBus).input:e.outputBus!==undefined?buses.get(e.outputBus).input:master,0,0);
+ };
+ scheduleBatch(0,15);
+ for(let at=15;at<duration;at+=15)ctx.suspend(at).then(async()=>{report.textContent=`Rendering ${Math.round(at/duration*100)}%…`;scheduleBatch(at,at+15);await ctx.resume();});
+ const buffer=await ctx.startRendering(),left=buffer.getChannelData(0),right=buffer.getChannelData(1);
+ let peak=0,finite=true;const sums=Array(4).fill(0),counts=Array(4).fill(0);
+ for(let i=0;i<left.length;i++){const a=left[i],b=right[i];peak=Math.max(peak,Math.abs(a),Math.abs(b));finite&&=Number.isFinite(a)&&Number.isFinite(b);const section=Math.floor(i/sr/30);if(section<4){sums[section]+=a*a+b*b;counts[section]+=2;}}
+ const pcm=new ArrayBuffer(44+left.length*4),view=new DataView(pcm),str=(offset,s)=>{for(let i=0;i<s.length;i++)view.setUint8(offset+i,s.charCodeAt(i));};
+ str(0,'RIFF');view.setUint32(4,pcm.byteLength-8,true);str(8,'WAVE');str(12,'fmt ');view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,2,true);view.setUint32(24,sr,true);view.setUint32(28,sr*4,true);view.setUint16(32,4,true);view.setUint16(34,16,true);str(36,'data');view.setUint32(40,pcm.byteLength-44,true);
+ for(let i=0;i<left.length;i++){view.setInt16(44+i*4,Math.round(Math.max(-1,Math.min(1,left[i]))*32767),true);view.setInt16(46+i*4,Math.round(Math.max(-1,Math.min(1,right[i]))*32767),true);}
+ const audio=document.querySelector('#audio');audio.href=URL.createObjectURL(new Blob([pcm],{type:'audio/wav'}));audio.hidden=false;
+ report.textContent=JSON.stringify({complete:true,duration,notes:score.events.length,dropped:engine.droppedVoices,finite,peak,sectionRms:sums.map((v,i)=>Math.sqrt(v/counts[i]))},null,2);
+ engine.stop();for(const c of circuits.values())c.dispose();for(const b of buses.values())b.dispose();
+}catch(e){report.textContent=String(e.stack||e);button.disabled=false;}};
+</script>

@@ -1,0 +1,10 @@
+# (contents)&G marks an AGENTIC region, never a local fallback.
+# Play starts agentic growth. The agent continues when its pod is closed.
+# Only this region is sent; proposals are compiled before applying.
+# Manual edits during generation discard the stale proposal. Stop/pause cancels adoption.
+!b100 !sa
+uJMA o110
+(
+s[n1 3 5 3]v0.8e0254'n8p-0.5
+t[n1 2 4 5]v0.5e0254'n8p0.5r2
+)&G

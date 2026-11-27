@@ -1,0 +1,7 @@
+# FM excitation -> feedback return -> shared reverb -> final output fade.
+# carrier : modulator; i changes modulation depth; voice v scales the carrier output.
+# All inner FM ramps last 5 seconds here. The circuit continues until 16 seconds.
+# Postfix )v9>0'20 fades the COMPLETE output, including the reverb tail.
+(
+ {t82.5>1000'5:s270.5i9>0'5v1>0'5e0}d0.013g1.08f5.5x0.35v2'16
+)r4v9>0'20

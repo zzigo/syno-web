@@ -1,0 +1,23 @@
+# OUTPUT DESK / choose one active case; comment/uncomment with Cmd/Ctrl+/.
+# () groups and finite repetitions; {} gathers audio; only explicit g enables feedback.
+# Processors read left-to-right. p and f ramps without a time span the whole bus.
+!b128 !sa
+roll=(n[1 1 1 1 1 1 1 1]v0.7e0012'n16f7)
+kick=(s[55 ~ ~ ~ 55 ~ ~ ~]v3e0093'n16)
+
+# 01 One named expression, one shared pan sweep.
+{roll}p1>-1
+# 02 One shared filter opens over roll's complete duration.
+# {roll}f1>8
+# 03 Combine two instruments, then filter / pan / delay / reverb the mix.
+# {kick roll}f2>8p-0.6>0.6d0.1875r3
+# 04 Chop BEFORE reverb: the tail crosses the silent gates.
+# {roll}h2r6
+# 05 Chop AFTER reverb: the wet tail is also gated.
+# {roll}r6h2
+# 06 Process each branch separately, then filter the complete mix.
+# {{kick}p-0.4 {roll}p0.4d0.1875}f3>8r3
+# 07 Pan/filter separately before and after a shared reverberant stage.
+# {{roll}p1>-1f2>8}r5f8>3p-1>1
+# 08 Feedback is explicit; its filter/delay live inside the return.
+# {{n2v0.02'0.03e0}g1.08d0.013f5v2'4}f8>2p1>-1r3

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "ESNext", "moduleResolution": "Bundler",
+    "allowJs": true, "checkJs": false, "strict": true, "isolatedModules": true,
+    "skipLibCheck": true, "noEmit": true, "resolveJsonModule": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "paths": {
+      "@orf/client": ["./vendor/orf-client/index.ts"],
+      "@orf/core": ["./vendor/orf-core/index.ts"]
+    }
+  },
+  "include": ["src/**/*", "tests/**/*", "vite.config.ts"]
+}

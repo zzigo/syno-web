@@ -1,0 +1,11 @@
+# NO-INPUT · TWO BANDS
+# Two continuously excited, cross-coupled resonant returns.
+# b = band centres Hz, q = reciprocal Q, k = drive before tanh.
+# d and g accept left,right; x adds the other channel's output.
+# v is outside the return path. Cmd+. or Escape stops all audio.
+# Try b145,620 g0.82,0.75 k4, then apply with Cmd+Enter.
+!vc
+{
+ n2v0.03p-1'24e0
+ n1v0.03p1'24e0
+}b220,880q0.25,0.2k2.5g0.72,0.68d0.013,0.029x0.35v4'24

@@ -1,0 +1,8 @@
+# TUNINGS 06 / four tuning scopes, four independently growing layers.
+# h is a chopper, not a sound atom. Each layer has its own h speed.
+# TRY uPTH / uJMA / uHEX / uBPJ by replacing one local u expression.
+low=(uJMA o55 G N16 U0.04 D0.8 s82.5v0.8e0254'0.4h0.2p-0.75r3)
+mid=(uPTH o110 A N16 U0.07 D0.9 t165v0.6e0254'0.32h1.4p-0.25r2)
+high=(uHEX o165 S N16 U0.1 D1 a220v0.3e0254'0.26f5h3p0.25r3)
+root=(uBPJ o55 K N16 U0.08 D0.8 q82.5v0.3e0254'0.36f4h5p0.75r2)
+low mid high root

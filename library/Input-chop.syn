@@ -1,0 +1,5 @@
+# i = i1. h3 gates the input before reverb.
+# Default input duration is 8 seconds; here it is explicit 30 seconds.
+# i2 requires a device exposing at least two channels; it is not a second device selector.
+!i1=(0.9)
+ih3r3v3e0'30

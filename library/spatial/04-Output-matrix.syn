@@ -1,0 +1,8 @@
+# p[o ...] specifies per-output gains, 0..9, in speaker row order.
+# No normalization: 9 9 means two unity sends. v is independent.
+!t[Matrix shadows]
+!spk[000 900 909 009]
+!vs
+s110v0>1>0'8e0p[o 9 0 0 9]
+t220v0>0.7>0'8e0p[o 0 9 9 0]
+a330v0>0.3>0'8e0p[o 9>0 0>9 0 0]

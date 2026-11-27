@@ -1,0 +1,6 @@
+# CLONAL DRIFT · A / apomixis
+# N 1–128 generations · U 0–1 mutation · D 0.1–3 spread
+!vc
+A N40 U0.18 D1.3
+s110v3e0255'0.28
+t165v2e0144'0.18

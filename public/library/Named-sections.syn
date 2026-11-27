@@ -1,0 +1,13 @@
+# Three rooms / named sections, header title, Stocky score, F follow.
+# Play whole piece; Cmd/Ctrl+[ ] queues a section at the next loop.
+# While stopped, section navigation positions the cursor and selects the next Play scope.
+# Whole piece is available in the header section dropdown. F / Alt F follows time.
+!t[Three rooms]
+!vt
+!b120
+;intro
+(s220v1e0254'n4)4
+;chorus
+{(s[330 440 550 660]v2e0254'n8)2}p-1>1r3
+;<last room>
+t110v0>2>0'2e0

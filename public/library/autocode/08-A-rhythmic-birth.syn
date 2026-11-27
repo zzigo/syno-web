@@ -1,0 +1,10 @@
+# A& · clonal pulse, dormant gaps and timbral births.
+# AI uses the selected model. The mother remains; daughters acquire a proportional rhythm.
+# ~?2 = 20% silence per loop. Change to ~?5 for 50%, ~?9 for 90%.
+# U controls how often a related new timbre is born; N/U/D may be edited compactly.
+!t[Daughters with intervals of absence]
+!vc
+A543&(
+s165:s41.25i1.2v0>0.8>0'1.2e0f6r3p-0.5
+0.3t165:s41.25i1.8v0>0.5>0'1.2e0f5r3p0.5
+)

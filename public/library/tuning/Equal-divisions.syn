@@ -1,0 +1,4 @@
+# 31 equal steps per octave; one n marks the list; positions start at 1.
+!b100 !sa
+u31 o220
+s[n1 4 7 10 13 16 19 22]v2e0254'n8

@@ -1,0 +1,9 @@
+# RANDOM SWEEPS / independent timbre, pitch endpoints, pan endpoints and duration.
+# Implicit sweep times follow each newly sampled gate.
+# h.1 also gates the body's visibility in FOLD.
+!vc
+??>?v2e0254p?>?h.1'?[0.3:2]
+
+# Fixed sine, bounded upward sweep and left-to-right pan:
+# s?[110:220]>?[440:880]v2e0254p?[-1:0]>?[0:1]'?[0.5:3]
+# With independent 4-second pan: ??>?p?>?'4v2e0254'? 

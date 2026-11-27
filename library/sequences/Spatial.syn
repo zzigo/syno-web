@@ -1,0 +1,5 @@
+# Extra spaces are silent slots. Source spacing is musically significant in !sx.
+!b120 !sx
+upper=(s[440   550 660    880]v2e0254'n8p-0.6)
+lower=(t[110  165    220 165]v1.5e0254'n8p0.6)
+upper lower

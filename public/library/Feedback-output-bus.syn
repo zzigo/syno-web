@@ -1,0 +1,7 @@
+# SHARED OUTPUT BUS
+# The outer r8 processes the complete feedback output, outside the return.
+# Its reverb tail survives the inner circuit's 16-second lifetime.
+# Turn LOOP off before Play to hear that tail decay naturally.
+# Cmd+. or Escape cuts all audio, buses and tails.
+!vc
+{{ s220v0.03'0.2e0 }d0.2g1.4f4x0.5v5'16}r8

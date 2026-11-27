@@ -1,0 +1,4 @@
+# RHYTHM 08 / !sc holds one oscillator through the phrase; v zero makes a rest.
+# Compare !sa: the same cells retrigger the ADSR per step.
+!b120 !sc
+s[110 165 220 330]:s27.5i0.2>6'8v[1 0 0.7 0 1.2 0 0.4 0]f2>8'8p-0.8>0.8'8e0'n4

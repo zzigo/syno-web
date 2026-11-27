@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>syNo · output probe</title><link rel="stylesheet" href="./style.css"></head>
+<body><main><header><span class="brand">syNo</span><span>OUTPUT PROBE · 01</span></header>
+<h1>One signal. Each output.</h1><p>A sequential channel check, with a stereo reference and a discrete multichannel WAV. This test does not render the current editor score.</p>
+<section><label>CHANNELS <select id="channels"><option>2</option><option>4</option><option selected>8</option><option>16</option><option>32</option></select></label><span class="detail">48 kHz · −30 dBFS · 10 ms fades</span></section>
+<div id="outputs" aria-label="Channel order"></div>
+<section class="actions"><button id="preview">▷ ST preview</button><button id="stop">■ STOP</button><button id="wav">↓ WAV · N</button><button id="manifest">↓ Channel map</button></section>
+<p class="detail">WAV: PCM 24-bit, discrete file order. No 5.1/7.1 assignment. Import into a DAW to route individual channels; browser players may downmix.</p>
+<section id="native"><h2>LOCAL OUTPUT</h2><p id="connection">Looking for the local test service…</p><label>DEVICE <select id="device" disabled><option value="">Select an output device</option></select></label><label class="check"><input type="checkbox" id="loopback"> Measure BlackHole return</label><button id="test" disabled>▷ Test native outputs</button><p class="detail">Native output and ST preview are separate diagnostic plays. Browser → Node PCM streaming is the next milestone.</p></section>
+<output id="status" aria-live="polite">Ready.</output><pre id="report"></pre>
+<footer>Space / Escape / ⌘. stop · Native playback is finite · No system default-device changes</footer>
+</main><script type="module" src="./app.mjs"></script></body></html>

@@ -1,0 +1,8 @@
+# RHYTHM 10 / four independent processes share one patch.
+# A growth supplies its own traversal onsets; a list supplies musical cells.
+!b112 !sa
+canopy=(u31 o110 G N16 U0.08 D0.9 s165v0.5e0254'0.3r3)
+bass=(uJMI o55 s[n1 ~ 5 3 ~ 1 5 ~]v0.9e0254'n8h0.3p-0.6)
+chord=(uHEX o220 t[n1 [2 4 6] ~ 5]v0.6e0254'n4f4>7'3p0.6r2)
+dust=(n2v[0.25 0 0.12 0 0.2 0.1 0 0]f[3 6 4 7]e0'n16h0.2>3'1.1)
+canopy bass chord dust

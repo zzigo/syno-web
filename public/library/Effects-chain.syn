@@ -1,0 +1,5 @@
+# EFFECTS IN ORDER
+# r4h2 chops the reverberated output, including its tail.
+# Swap to h2r8: chops first, then reverberates the cuts.
+!vc
+{{ n1v0.03'0.2e0 }d0.005g1.11f5.8>1x0.35v2'26}r4h2

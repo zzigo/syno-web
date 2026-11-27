@@ -1,0 +1,9 @@
+# p[o1>2]: a linear crossfade between two raw outputs.
+# Every other output remains zero. No DBAP, calibration or gain normalization.
+# !spk compact XYZ: digits 0..9 map linearly to -1..1 metres.
+!t[Across the wires]
+!spk[000 900 909 009]
+!vs
+s110>165v0>2>0'8e0p[o1>2]
+t330>220v0>0.8>0'8e0p[o4>3]
+2n2v0>0.4>0'6e0f7>2h0.2>4p[o2>4]

@@ -1,0 +1,13 @@
+# STOCKY / two rooms. Space is time; the lower plot composes ALL written v stages.
+# Pinch out strongly expands time; pinch in closes it. + / - also zoom.
+# 0, double-click or the bottom 1:1 control fits the whole score.
+# Drag / horizontal scroll pans time; F follows the current zoomed window.
+# Detach FOLD with its corner arrow or its tab context menu, then Ctrl+F fullscreen.
+!t[Ramp rooms]
+!vt
+intro=({s220v3'10e0 s330v2'10e0}v0>9>0'10)
+chorus=({s440v3'10e0 s660v2'10e0}v0>9'10)
+intro
+;
+chorus
+# Names come from the calls. No ;intro / ;chorus repetition is necessary.

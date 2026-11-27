@@ -1,0 +1,27 @@
+{
+  "source": "Max 9 / very-special-guest / stockhausen-studie-II.maxpat",
+  "realization": "Georg Hajdu",
+  "scoreCopyright": "1954 Stockhausen Verlag",
+  "sourcePatchSha256": "0fc0ef7c4863ed1a8a07365356031d0bfaa97c7a058a0f9bdf25ca1f9a23b549",
+  "scoreDataSha256": "90d2bcc7e857b5f51b512bf480d177f4e4254e29fadf51b783bed11e26feaf28",
+  "eventCount": 380,
+  "sineComponents": 1900,
+  "mixtureCounts": {
+    "1": 78,
+    "2": 81,
+    "3": 83,
+    "4": 64,
+    "5": 74
+  },
+  "lastOnsetSeconds": 174.434,
+  "durationSeconds": 175.527,
+  "peakMixtures": 7,
+  "peakSineComponents": 35,
+  "outputSourceBytes": 17328,
+  "differences": [
+    "standard e0090 instead of Max line~ 21ms onset / noteoff edge behavior",
+    "standard StereoPanner mixture positions instead of Max MIDI panning implementation",
+    "shared synthetic convolution r4 instead of yafr2",
+    "uniform syNo output trim v3 and standard master limiter"
+  ]
+}

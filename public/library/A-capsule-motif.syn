@@ -1,0 +1,9 @@
+# A · detached inheritance. N=24, U=3/9, D=0.1+4*2.9/9.
+# One capsule carries the WHOLE two-event motif, including its timing ratios.
+# Try A504 (no environmental stress), A534, then A539 (spore dispersal).
+!t[Detached inheritance]
+!vc
+A534(
+s165:s41.25i1.2>3'0.24v0>0.7>0'0.24e0f5>7'0.24r2
+0.28t220:s55i2>0.5'0.36v0>0.45>0'0.36e0f6>4'0.36r3
+)

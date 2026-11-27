@@ -1,0 +1,9 @@
+# RHYTHM 09 / apostrophe n8>n32 means the FIRST step is an eighth,
+# the LAST a thirty-second; intermediate root-cell gates interpolate in seconds.
+# Nested tuplets subdivide their own changing parent duration.
+# LOOP returns to the initial speed; no global tempo automation is implied.
+!b96 !sa
+uDOR o110
+fast=(s[n1 3 5 7 8 7 5 3]v1e0254'n8>n32p-0.6)
+slow=(t[n1 5 [3 4 5] 7 5 3 2 1]v0.7e0254'n32>n8p0.6)
+fast slow

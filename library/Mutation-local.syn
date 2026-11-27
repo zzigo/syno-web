@@ -1,0 +1,9 @@
+# (contents)G mutates locally while playing. & is reserved for agents.
+# Open Agents to pause, change interval or undo. No AI request is made here.
+# A/S/H/R/K suffixes use their own seeded growth geometry as the mutation driver.
+!b100 !sa
+uHEX o110
+(
+s[n1 2 [3 4 5] 6]v0.8e0254'n8p-0.5r2
+t[n1 3 5 4]v0.5e0254'n4p0.5r3
+)G

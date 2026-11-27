@@ -1,0 +1,10 @@
+# L-SYSTEM · symbolic growth, explicit musical bindings
+# L4 = 4 parallel rewriting generations; default axiom = first rule symbol
+# A > AB > ABA > ABAAB > ABAABABA
+!vf
+aa=s220v3e0254'0.2
+bb=t330v2e0153'0.2
+L4 A>AB B>A @A=aa @B=bb
+
+# Optional explicit axiom: L4:AC
+# Parameterized binding: tone=s*v2'0.2 and @A=tone220

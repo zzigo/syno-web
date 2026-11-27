@@ -1,0 +1,8 @@
+# RHYTHM 07 / same cell structure in three voices creates homorhythm.
+# Replace a pitch list with n1 1 1 1 1 1 1 1 for synchronous unison rhythm.
+!b104 !sa
+uJMI o110
+low=(s[n1 ~ 5 3 1 ~ 5 3]v1e0254'n8p-0.6)
+mid=(t[n3 ~ 7 5 3 ~ 7 5]v0.8e0254'n8p0)
+high=(a[n5 ~ 8 7 5 ~ 8 7]v0.3e0254'n8f5p0.6)
+low mid high

@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><title>Chop offline verification</title><button id="start">Render gate verification</button><pre id="report">Ready</pre>
+<script type="module">
+import {AudioEngine} from '/src/audio/engine.ts';import {compile} from '/src/core/parser.ts';import {chopClock} from '/src/audio/chop-clock.ts';
+const button=document.querySelector('#start'),report=document.querySelector('#report');button.onclick=async()=>{const cases=[];
+for(const source of ["s220v2e0h9'3","s220v2e0h.1>3'3"]){const ctx=new OfflineAudioContext(2,144000,48000),engine=new AudioEngine(),score=compile(source);engine.context=ctx;engine.score=score;engine.schedule(score.events[0],0,ctx.destination);const buffer=await ctx.startRendering(),a=buffer.getChannelData(0),event=score.events[0],clock=chopClock(event.chopRamp??{start:event.chop,end:event.chop,duration:0},0),samples=[];for(let t=.05;t<2.9;t+=.01){let sum=0;for(let i=Math.floor(t*48000);i<Math.floor((t+.005)*48000);i++)sum+=a[i]*a[i];samples.push({t,gate:clock.levelAt(t),endGate:clock.levelAt(t+.005),rms:Math.sqrt(sum/240)});}const closed=samples.filter(s=>s.gate===0&&s.endGate===0),open=samples.filter(s=>s.gate===1&&s.endGate===1),maxClosed=Math.max(...closed.map(s=>s.rms)),maxOpen=Math.max(...open.map(s=>s.rms));cases.push({source,closed:closed.length,open:open.length,maxClosed,maxOpen,synchronized:closed.length>0&&open.length>0&&maxClosed<.000001&&maxOpen>.001});}
+report.textContent=JSON.stringify({complete:true,synchronized:cases.every(c=>c.synchronized),cases},null,2);};
+</script>

@@ -1,0 +1,5 @@
+# SHARED GATE / seven simultaneous tones, one ten-second pan/filter gesture.
+# '10 supplies the missing gates; explicit note gates keep priority.
+{s100 s200 s300 s400 s500 s700 s800}p1>-1f5>3'10
+# {s100'2 2s200 s300'3}p1>-1f5>3'10  # gates: 2, 8 and 3 seconds
+# Rhythmic sequences, finite-repeat clocks and feedback excitations keep their own gates.

@@ -1,0 +1,44 @@
+<!doctype html><meta charset="utf-8"><title>syNo native audio verification</title>
+<button id="run">Run native offline verification</button><pre id="result">Ready</pre>
+<script type="module">
+import {createEcho} from '/src/audio/delay.ts';
+import {compile} from '/src/core/parser.ts';
+import {createOutputBus} from '/src/audio/output-bus.ts';
+import {createFeedbackCircuit} from '/src/audio/feedback.ts';
+async function render(g,stop=false,bands=false){
+ const ctx=new OfflineAudioContext(2,48000*8,48000),score=compile(bands?"{n1v0.03'0.02e0}b220,880q0.25,0.2k2.5g0.72,0.68d0.013,0.029x0.35v4'8":`{n1v0.03'0.02e0}d0.012g${g}f6.6x0.35v2'8`);
+ if(score.diagnostics.length)throw Error(JSON.stringify(score.diagnostics));
+ const circuit=createFeedbackCircuit(ctx,score.feedback[0],0,ctx.destination);
+ const seed=ctx.createBuffer(2,960,48000);let state=3181;
+ for(let c=0;c<2;c++){const values=seed.getChannelData(c);for(let i=0;i<values.length;i++){state=(Math.imul(state,1664525)+1013904223)>>>0;values[i]=(state/4294967296*2-1)*.03/9*.16;}}
+ const source=ctx.createBufferSource();source.buffer=seed;source.connect(circuit.input);source.start(0);
+ let suspension=stop?ctx.suspend(4):undefined;
+ const pending=ctx.startRendering();if(suspension){await suspension;circuit.dispose();await ctx.resume();}
+ const buffer=await pending;const x=buffer.getChannelData(0);
+ const rms=(a,b)=>Math.sqrt(x.slice(a*48000,b*48000).reduce((s,v)=>s+v*v,0)/((b-a)*48000));
+ let peak=0,finite=true;for(const v of x){peak=Math.max(peak,Math.abs(v));finite&&=Number.isFinite(v);}
+ return {gain:g,bands,stopped:stop,early:rms(0,1),late:rms(5,7),peak,finite};
+}
+async function renderOutputBus(stop=false,chain='r8'){
+ const ctx=new OfflineAudioContext(2,48000*6,48000),score=compile("{s220v3'0.2e0}"+chain);
+ const ir=ctx.createBuffer(2,48000*6,48000);let state=3181;
+ for(let c=0;c<2;c++){const data=ir.getChannelData(c);for(let i=0;i<data.length;i++){state=(Math.imul(state,1664525)+1013904223)>>>0;data[i]=(state/4294967296*2-1)*Math.exp(-6.91*i/data.length);}}
+ const bus=createOutputBus(ctx,score.outputBuses[0],0,ctx.destination,()=>ir);
+ const source=ctx.createOscillator();source.frequency.value=220;const gain=ctx.createGain();gain.gain.value=.1;source.connect(gain).connect(bus.input);source.start(0);source.stop(.2);
+ const suspension=stop?ctx.suspend(2):undefined,pending=ctx.startRendering();if(suspension){await suspension;bus.dispose();await ctx.resume();}
+ const buffer=await pending,x=buffer.getChannelData(0),rms=(a,b)=>Math.sqrt(x.slice(a*48000,b*48000).reduce((s,v)=>s+v*v,0)/((b-a)*48000));
+ let gaps=0;for(let t=1;t<2;t+=.02)if(rms(t,t+.01)<1e-7)gaps++;return {chain,stopped:stop,tail:rms(.4,1),late:rms(3,5),gaps,finite:x.every(Number.isFinite)};
+}
+async function renderDelay(){
+ const ctx=new OfflineAudioContext(1,48000*6,48000),echo=createEcho(ctx,{start:2,end:2,duration:0},0);
+ const source=ctx.createOscillator();source.frequency.value=200;source.connect(echo.input);echo.output.connect(ctx.destination);source.start(0);source.stop(.1);
+ const buffer=await ctx.startRendering(),x=buffer.getChannelData(0),rms=(a,b)=>Math.sqrt(x.slice(a*48000,b*48000).reduce((s,v)=>s+v*v,0)/((b-a)*48000));return {silence:rms(1,1.1),first:rms(2,2.1),second:rms(4,4.1)};
+}
+document.querySelector('#run').onclick=async()=>{try{
+ const results=[await render(.85),await render(1.12),await render(1.12,true),await render(.72,false,true),await render(.72,true,true)];
+ const passed=results.every(r=>r.finite&&r.peak<.2)&&results[0].late<1e-7&&results[1].late>1e-4&&results[2].late<1e-7&&results[3].late>1e-4&&results[4].late<1e-7;
+ const buses=[await renderOutputBus(),await renderOutputBus(true)];
+ const order=[await renderOutputBus(false,'r8h2'),await renderOutputBus(false,'h2r8')],delay=await renderDelay();
+ document.querySelector('#result').textContent=JSON.stringify({passed:order[0].gaps>order[1].gaps&&delay.first>delay.second&&delay.second>0&&delay.silence===0&&passed&&buses.every(b=>b.finite)&&buses[0].tail>1e-5&&buses[0].late>1e-8&&buses[1].late===0,results,buses,order,delay},null,2);
+}catch(e){document.querySelector('#result').textContent=String(e.stack||e);}};
+</script>

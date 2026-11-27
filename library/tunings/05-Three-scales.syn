@@ -1,0 +1,6 @@
+# TUNINGS 05 / three roots and three quantizers coexist.
+# TRY u53 for lower, uHEX for middle, uPEL for upper.
+lower=(u19 o55 G N16 U0.04 D0.8 s82.5v0.8e0254'0.42p-0.65r2)
+middle=(u31 o110 H N16 U0.09 D0.9 t165v0.6e0254'0.32p0r3)
+upper=(uJMI o220 R N16 U0.12 D1 a220v0.35e0254'0.24f4>7'0.24p0.65r2)
+lower middle upper

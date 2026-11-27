@@ -1,0 +1,16 @@
+/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co; base-uri 'self'; form-action 'self'
+
+/
+  Content-Security-Policy: frame-ancestors 'none'
+/index.html
+  Content-Security-Policy: frame-ancestors 'none'
+/popout.html
+  Content-Security-Policy: frame-ancestors 'none'
+/embed.html
+  Content-Security-Policy: frame-ancestors *
+/embed
+  Content-Security-Policy: frame-ancestors *

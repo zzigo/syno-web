@@ -1,0 +1,7 @@
+# RHYTHM 06 / lists on ONE voice share their least common period.
+# 5 pitches and 8 accents = 40 eighth-note steps, not eight steps.
+!b120 !sa
+uPEN o110
+s[n1 2 3 4 5]v[1.5 0.5 0 0.8 1.2 0.4 0 0.8]e0254'n8p-0.4
+low=(uJMA o55 t[n1 ~ 5 ~]v0.8e0254'n4p0.5)
+(low)5

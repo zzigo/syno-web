@@ -1,0 +1,5 @@
+# STOLON · runners and ramets
+# N 1–128 generations · U 0–1 mutation · D 0.1–3 spread
+!vc
+S N32 U0.08 D1.1
+t165v3e0254'0.22

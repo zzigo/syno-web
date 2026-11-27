@@ -1,0 +1,11 @@
+# GENERATOR MORPH · g is an XYZ target, on the 0–9 scale
+# s → t → a → q → s:s → s:t → s:a → s:q → … → q:q
+# Adjacent stages blend harmonic components continuously.
+# Without written FM, the modulator follows carrier / 4; i sets its depth.
+# X = generator family, Y = frequency, Z = intensity.
+G453@gov
+s110v3i2e0254'0.65
+# Compare the default map, including Z volume:
+# G453 s110v3e0254'0.65
+# Compare Z as generator family, keeping pan and frequency:
+# R453@pog t110v2i3e1354'0.8

@@ -1,0 +1,11 @@
+# WRITTEN PROSODY / manual syllable / word attacks using existing events.
+# ; advances to the next event. A newline alone means parallel music.
+# Tiny gates compress speech by resampling; use longer gates for intelligibility.
+# Each l[] is synthesized separately here, with an exact written onset and gate.
+!b80
+l[this]:a220v4'n8 ;
+l[is]:a247v3'n16 ;
+l[the]:a262v3'n16 ;
+l[first]:a330v4'n4 ;
+l[sy]:a294v4'n8 ;
+l[llable]:a220v3'n4r3

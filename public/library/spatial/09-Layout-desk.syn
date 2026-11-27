@@ -1,0 +1,15 @@
+# ONE active speaker layout per score. Alt+Up/Down on spk cycles the preset list.
+# Ring/full-range: spk4 spk8 spk12 / spkQUA spkOCT spkDOD
+# Stereo/front: spk1 spk2 spk2.1 spk3.0 spk3.1 / spkMON spkSTE spkLCR
+# Surround: spk4.0 spk5.0 spk5.1 spk6.1 spk7.1 / spkSUR = 5.1
+# Heights: spk5.1.2 spk5.1.4 spk7.1.2 spk7.1.4 spk9.1.6
+# spk8 is eight full-range outputs; spk7.1 is seven plus LFE.
+# spk12 is a flat ring; spk7.1.4 is seven + LFE + four overhead channels.
+# These are editable output layouts, not Atmos/DTS bitstream encoders.
+# Positional DBAP never sends to LFE. Raw p[o4] may address LFE explicitly, without automatic filtering.
+!t[Layout desk]
+!room[20 10 30]
+spk8
+!vs
+s220v0>2>0'8e0p[o1>2>3>4]
+t330v0>0.6>0'8e0p[x -1 0 -1]>[x 1 0 1]

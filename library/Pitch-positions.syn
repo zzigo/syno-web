@@ -1,0 +1,6 @@
+# One n marks the WHOLE pitch list. Positions start at 1.
+# Prefixes shift literal octaves: -1 root below, +2 second degree above, --1 two below.
+# On uBPJ, the tuning period stays 3/1, but explicit +/- registers are 2/1 octaves.
+!b100 !sa
+uJMA o110
+s[n1 2 [3 4 5] 6 7 -1 +2 --1]v1e0254'n8

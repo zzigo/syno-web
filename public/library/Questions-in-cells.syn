@@ -1,0 +1,8 @@
+# Spaces subdivide rhythmic cells. Commas and spaces separate exact alternatives; colons delimit random intervals.
+# Random time is sampled per ROOT cell; children subdivide that sampled duration.
+# In !sa each event gets its own timbre/envelope; !sc holds one atom for the phrase.
+!b100 !sa
+s[[300 ?] [400 500]]v1e0254'?[0.1:1]p-0.5
+?[300 [400 500]]v0.7e0254'n8p0.5
+a[300 [400 500]]h?v0.3e0254'n8f5
+# Other valid forms: s?[300:400]  s[n1 ? 3 ?[2:5]]  h?[0.1:3]

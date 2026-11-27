@@ -1,0 +1,18 @@
+# SECTIONS — ; advances to the longest event end; ;10 adds ten seconds.
+# Without ; expressions start together. Numeric onsets use the current section origin.
+# Reverb and delay tails overlap the following section; Loop OFF auditions this form once.
+# The scoped A and G run together; repeat that complete section three times.
+(
+ A543 (
+  s165:s41.25i1.2v0.6e0254'0.2p-0.5
+  0.3t165:s41.25i1.8v0.4e0254'0.2p0.5
+ )
+ G119 (s120v1'0.2r5)
+)3
+;2
+# Starts two seconds after the repeated growths finish.
+(s110v0.8e0254'0.5 ; t220v0.5e0254'0.5)2
+;
+# Named sections also work: opening ;10 ending
+q55v0>0.4>0'2e0f4r5
+# ;n4 waits a quarter note; ;b2 waits two beats at the current !b tempo.

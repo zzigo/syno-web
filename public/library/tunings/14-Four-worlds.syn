@@ -1,0 +1,13 @@
+# TUNINGS 14 / advanced study. Start with 04 before editing this one.
+# Four u scopes in growths coexist with three rhythmic cells using those worlds.
+# Single comma / cents alternatives and every alias are in 00 Scale desk.
+# The cell step durations accelerate or slow smoothly across their root cells.
+!b96 !sa
+canopy=(u31 o110 G N20 U0.05 D0.8 s165:t27.5i0.3>6'0.4v0.6e0254'0.4r3)
+branches=(uHEX o165 H N18 U0.08 D0.9 @pov/dfs t220v0.45e0254'0.32r2)
+roots=(uBPJ o55 K N16 U0.09 D0.9 q82.5v0.25e0254'0.45f3>6'0.45h3r3)
+vines=(uPEL o110 S N18 U0.08 D1 a165v0.25e0254'0.3f5h0.3>2'0.3r3)
+low=(uBPJ o55 s[n1 ~ 4 7 ~ 9 4 1]v0.7e0254'n8>n16p-0.7r2)
+bright=(uHEX o220 t[n1 [3 4 6] 5 ~ 3 1]i0.2>4'2.4:s55v0.4e0254'n16>n4p0.5r3)
+grain=(u31 o110 a[n1 6 ~ 12 19 ~]v0.2e0254'n8>n16f3>7'2h0.2>4'2p0.7r3)
+canopy branches roots vines low bright grain

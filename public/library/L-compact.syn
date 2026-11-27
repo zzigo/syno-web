@@ -1,0 +1,5 @@
+# L322 = 3 generations / 25-degree turns / 0.55 branch taper.
+# Exact equivalent: L3:F/25,0.55 ...
+!vl
+bark=n2v0>0.3>0'0.3f3>7'0.3e0'0.3
+L322:F F>F[+F]F[-F]F @F=bark

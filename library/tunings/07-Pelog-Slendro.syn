@@ -1,0 +1,5 @@
+# TUNINGS 07 / these cents are explicit approximations from the sketch.
+# TRY custom cents from 00 Scale desk. Traversal nnb is parent-first nearest.
+air=(uPEL o110 S N18 U0.08 D1 @pov/nnb s165v0.7e0254'0.24r3)
+wood=(uSLD o165 R N18 U0.12 D1 @pof/dfs t220v0.5e0254'0.31r2)
+air wood

@@ -1,0 +1,9 @@
+# EXACT CHOICES / try one active line at a time, Loop ON.
+# Space = comma. Only 100, 200 or 400 Hz, never values between.
+s?[100 200 400]v2e0254'0.3
+# s?[110,880]v2e0254'0.3
+# s?[110:880]v2e0254'0.3    # continuous logarithmic Hz interval
+# s?[110:]v2e0254'0.3       # 110 to default 1760 Hz
+# s?[:880]v2e0254'0.3       # default 55 to 880 Hz
+# !sa s[300 400 500]v2e0254'?[0.1,1]  # each cell: exactly .1 or 1 second
+# s220v?[1 3 5]p?[-1 0 1]h?[0.1:3]'1

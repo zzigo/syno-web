@@ -1,0 +1,12 @@
+{
+  "provider": "Cloudflare Pages",
+  "project": "notation-review-27",
+  "url": "https://notation-review-27.pages.dev/",
+  "deploymentUrl": "https://b46b2596.notation-review-27.pages.dev",
+  "directory": "dist",
+  "productionBranch": "main",
+  "audience": "anonymous-review",
+  "reviewSupplement": "https://notation-review-27.pages.dev/",
+  "orf": "existing server-side gateway, hidden behind /api/ai",
+  "personalLaboratory": "https://syno-lab-zztt.pages.dev/"
+}

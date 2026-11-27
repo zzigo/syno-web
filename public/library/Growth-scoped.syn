@@ -1,0 +1,6 @@
+# Each generator applies only to its parentheses; the last voice stays outside growth.
+# G234 = N4 U0.3333 D1.3889. H123 = N2 U0.2222 D1.0667.
+uJMA o110
+G234 (s110v1e0254'0.2p-0.6)
+H123 (t165v0.6e0254'0.3p0.6)
+a220v0.1e0254'2

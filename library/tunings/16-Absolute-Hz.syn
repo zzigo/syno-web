@@ -1,0 +1,14 @@
+# EXACT Hz / discrete table, not cents and not MIDI.
+# Positions refer directly to the written table; o does not transpose an absolute table.
+# + / - still shift an indexed entry by an octave; out-of-table positions are errors.
+# Cents and ratio scales keep their existing repeating-period behavior.
+!b100 !sa
+u[f 178.496293 190.365394 217.132941 246.180634 280.133322 319.239317 362.389832]
+s[n1 2 3 5 7 5 3 2]v1.5e0254'n8p-0.4r2
+t[n7 5 4 3]v0.7e1354'n4p0.4r3
+# TRY the same table on growth: comment the two sequence rows first.
+# A234 s220v0.7e0254'0.3
+# Reusable table-position, intensity and duration arguments:
+# tone=s[n*]v*e0090'*
+# tone2,1.2,0.4
+# * opens a function argument; *2 reuses argument 2. It is NOT a rhythm multiplier.

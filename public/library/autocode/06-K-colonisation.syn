@@ -1,0 +1,11 @@
+# Colonisation · sparse grains and noisy attractors
+# K354& : geometry N8 U0.5556 D1.3889; no static population expansion.
+# Play starts agentic growth; open Agents to choose model or behavior.
+# Only the parenthesized music is rewritten. Bottom AI shows input/output tokens.
+# Pause / Undo mutation in Agents; Cmd+. stops sound and blocks further adoption.
+!b90 !sa
+K354& (
+s[220 ~ 330 440 ~]v0.4e0254'n8p-0.6r2
+t[660 440 ~ 880]v0.2f5e0254'n16p0.6
+n2v0.06f6h2e0254'0.4p0r3
+)

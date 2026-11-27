@@ -1,0 +1,5 @@
+# ROOTS · K / space colonisation
+# N 1–128 generations · U 0–1 mutation · D 0.1–3 spread
+!vc
+K N48 U0.08 D1.2
+s110v3e0254'0.18

@@ -1,0 +1,9 @@
+# RANDOM TIME / independent random pitch and duration.
+# '? = uniform 0.1–2 seconds, resampled at every loop.
+# Loop length follows the sampled duration, without maximum-length padding.
+s?[110:880]v2e0254'?
+
+# Bounded version: s?[110:880]v2e0254'?[0.05:0.8]
+# Random timbre too: ??v2e0254'?[0.1:1.2]
+# Finite phrase: (s?[110:880]v2e0254'?[0.1:0.8])8
+# Duration changes the note gate; other parameter sweep times stay independent.

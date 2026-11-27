@@ -1,0 +1,10 @@
+# L · TREE / bracketed Lindenmayer grammar / seed 3181
+# F moves forward and plays bark; + / - turn 25 degrees.
+# [ saves position, direction and musical time; ] restores the fork.
+# Branches grow and sound together. No automatic pitch transposition.
+!vl
+bark=(
+ n2v0>0.28>0'0.65f2>6'0.65p-0.4>0.4'0.65e0r2'0.65
+ s110:t37i0.2>5'0.65v0>0.42>0'0.65e0r2'0.65
+)
+L3:F/25 F>F[+F]F[-F]F @F=bark

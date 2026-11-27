@@ -1,0 +1,5 @@
+# Untimed pan follows the explicit 0.8-second gate, also inside a named growth.
+# Add '2 after either pan transition to give it an independent two-second sweep.
+left=(uJMA o220 A N12 U0.03 D0.7 s220v0.7e1354'0.8p-0.6>1)
+right=(uJMA o222.75 A N12 U0.03 D0.7 s222.75v0.7e1354'0.8p0.6>-1)
+left right

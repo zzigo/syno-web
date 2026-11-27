@@ -1,0 +1,11 @@
+{
+  "provider": "Cloudflare Pages",
+  "project": "notation-review-27",
+  "productionBranch": "main",
+  "directory": "review-site/dist",
+  "url": "https://notation-review-27.pages.dev/",
+  "deploymentUrl": "https://0c329647.notation-review-27.pages.dev",
+  "release": "anonymous-landing-page",
+  "interactiveRuntimeAvailable": false,
+  "retainThrough": "2027-04-23"
+}

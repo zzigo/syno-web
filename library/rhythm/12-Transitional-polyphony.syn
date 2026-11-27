@@ -1,0 +1,11 @@
+# RHYTHM 12 / first learn 03, 04 and 09. Every line is an independent voice.
+# Articulated cell sweeps run inside each note; continuous sweeps span the whole phrase.
+# The global loop repeats the complete combined span. Fine-edit glide is a UI setting,
+# distinct from the score's explicit ramps. h is a chopper, not a waveform.
+!b100
+bass=(!sa uJMI o55 s[n1 ~ 5 3 1 ~ 5 ~]v1e0254'n8>n16p-0.7r3)
+metal=(!sc uHEX o110 t[n1 3 [4 5 6] 3 ~ 1]:s27.5i0.2>7'4v0.65e0'n16>n4f2>8'4p-0.6>0.6'4r3)
+sparks=(!sa u31 o220 a[n1 6 ~ 12 19 ~ 24 19]v0.3e0254'n16>n32f3>8'0.2h0.2>3'0.2p0.7r2)
+shadow=(!sc uBPJ o55 q[n1 4 ~ 7 9 ~]v[0.35 0.2 0 0.3 0.1 0]e0'n8>n4f2>6'6h4>0.3'6p0.6>-0.6'6r3)
+dust=(!sc n2v[0.12 0 0.2 0 0.1 0.15 0 0]f[2 5 3 7]e0'n16>n8h0.1>5'2p-0.7>0.7'2r2)
+bass metal sparks shadow dust

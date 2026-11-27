@@ -1,0 +1,6 @@
+# TUNINGS 08 / six hexany degrees, not twelve equal semitones.
+# uHEX = u[1/1 7/6 5/4 35/24 5/3 7/4 2/1].
+# Compare dfs and bfs without changing the tuning.
+front=(uHEX o110 H N20 U0.07 D0.8 @pov/dfs s165:t27.5i0.3>3'0.32v0.6e0254'0.32r2)
+back=(uHEX o110 H N20 U0.07 D0.8 @pov/bfs t220v0.5e0254'0.32r3)
+front back

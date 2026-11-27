@@ -1,0 +1,75 @@
+# AFTER STUDIE I / original procedural miniature / 42 seconds / Loop OFF.
+# Reference: Stockhausen, Studie I (1953), programme note published by IRCAM.
+# Individual sine frequencies, levels, attacks and lifetimes compose each spectrum.
+# This is a new event schedule, NOT a transcription or the original recording.
+# Source/provenance: docs/historical-studies.md in the development repository.
+# Every line is one independently shaped pure sine; no FM or borrowed score data.
+
+# SPECTRUM 01 / 3 independent sine components.
+0s211v0'0.12>1.9'1.33>0'0.25e0p0
+0.017s293v0'0.139>1.2'1.1965>0'0.271e0p0
+0.034s419v0'0.158>0.75'1.063>0'0.292e0p0
+
+# SPECTRUM 02 / 4 independent sine components.
+2.3s137v0'0.12>1.2'2.03>0'0.25e0p0
+2.317s349v0'0.139>1.7'1.858>0'0.271e0p0
+2.334s521v0'0.158>0.8'1.686>0'0.292e0p0
+2.351s733v0'0.177>0.5'1.514>0'0.313e0p0
+
+# SPECTRUM 03 / 2 independent sine components.
+6s463v0'0.12>1.9'0.73>0'0.25e0p0
+6.017s619v0'0.139>1.3'0.6295>0'0.271e0p0
+
+# SPECTRUM 04 / 5 independent sine components.
+8s173v0'0.12>1.5'2.83>0'0.25e0p0
+8.017s277v0'0.139>1.1'2.614>0'0.271e0p0
+8.034s443v0'0.158>0.8'2.398>0'0.292e0p0
+8.051s709v0'0.177>0.6'2.182>0'0.313e0p0
+8.068s1133v0'0.196>0.4'1.966>0'0.334e0p0
+
+# SPECTRUM 05 / 3 independent sine components.
+12.5s317v0'0.12>1.7'1.23>0'0.25e0p0
+12.517s503v0'0.139>1.2'1.102>0'0.271e0p0
+12.534s797v0'0.158>0.7'0.974>0'0.292e0p0
+
+# SPECTRUM 06 / 4 independent sine components.
+15s109v0'0.12>1.5'2.33>0'0.25e0p0
+15.017s233v0'0.139>1.2'2.1415>0'0.271e0p0
+15.034s487v0'0.158>0.9'1.953>0'0.292e0p0
+15.051s977v0'0.177>0.6'1.7645>0'0.313e0p0
+
+# SPECTRUM 07 / 6 independent sine components.
+19s223v0'0.12>1.6'2.93>0'0.25e0p0
+19.017s367v0'0.139>1.2'2.7085>0'0.271e0p0
+19.034s601v0'0.158>0.9'2.487>0'0.292e0p0
+19.051s983v0'0.177>0.7'2.2655>0'0.313e0p0
+19.068s1609v0'0.196>0.5'2.044>0'0.334e0p0
+19.085s2633v0'0.215>0.3'1.8225>0'0.355e0p0
+
+# SPECTRUM 08 / 2 independent sine components.
+23.5s569v0'0.12>2'0.44>0'0.24e0p0
+23.517s887v0'0.139>1'0.3902>0'0.2268e0p0
+
+# SPECTRUM 09 / 3 independent sine components.
+26s149v0'0.12>1.6'1.83>0'0.25e0p0
+26.017s383v0'0.139>1.1'1.669>0'0.271e0p0
+26.034s991v0'0.158>0.7'1.508>0'0.292e0p0
+
+# SPECTRUM 10 / 5 independent sine components.
+30s197v0'0.12>1.8'3.23>0'0.25e0p0
+30.017s311v0'0.139>1.3'2.992>0'0.271e0p0
+30.034s491v0'0.158>0.9'2.754>0'0.292e0p0
+30.051s773v0'0.177>0.6'2.516>0'0.313e0p0
+30.068s1217v0'0.196>0.4'2.278>0'0.334e0p0
+
+# SPECTRUM 11 / 4 independent sine components.
+35s421v0'0.12>1.5'1.33>0'0.25e0p0
+35.017s673v0'0.139>1.1'1.1965>0'0.271e0p0
+35.034s1069v0'0.158>0.7'1.063>0'0.292e0p0
+35.051s1699v0'0.177>0.4'0.9295>0'0.313e0p0
+
+# SPECTRUM 12 / 3 independent sine components.
+38s157v0'0.12>1.7'3.63>0'0.25e0p0
+38s397v0'0.139>1.1'3.59>0'0.271e0p0
+38s1003v0'0.158>0.6'3.55>0'0.292e0p0
+

@@ -1,0 +1,86 @@
+# AFTER STUDIE II / five-tone tape apparatus / original procedural miniature.
+# Reference: the instrument-construction research of Antonio de Sousa Dias.
+# https://github.com/asousadias/Stockhausen_ElektronischStudie2_1954
+# This is NOT his score excerpt and NOT a complete reconstruction of Studie II.
+# Frequencies derive independently from 100 * 5^(k/25); five mixture widths.
+# Five 55.5 ms sine slices excite a reverb; every dry slice ends at 277.5 ms.
+# Each output contour remains exactly ZERO through at least 350 ms.
+# Consequently only the chamber tail is heard. Reverb is the material, not decoration.
+# syNo r9 uses its existing synthetic 6.65 s stereo IR, not the historical 10 s chamber.
+# New onsets, envelopes and object order below are composed for this syNo miniature.
+# Loop OFF. Source/provenance: docs/historical-studies.md.
+
+# Exact absolute-frequency table: one definition, one-based n positions.
+u[f 100 106.649494 113.741146 121.304357 129.370483 137.972966 147.147471 156.932033 167.36722 178.496293 190.365394 203.02373 216.523781 230.921517 246.27663 262.65278 280.117862 298.744283 318.609267 339.795172 362.389832 386.486923 412.186348 439.594656 468.825477 500 533.247471 568.705731 606.521786 646.852417 689.864831 735.737353 784.660166 836.836098 892.481466 951.826969 1015.11865 1082.6189 1154.60759 1231.38315 1313.2639 1400.58931 1493.72141 1593.04633 1698.97586 1811.94916 1932.43461 2060.93174 2197.97328 2344.12739 2500 2666.23736 2843.52865 3032.60893 3234.26208 3449.32415 3678.68676 3923.30083 4184.18049 4462.40733 4759.13485 5075.59324 5413.09452 5773.03793 6156.91575 6566.31951 7002.94655 7468.60707 7965.23167 8494.87929 9059.7458 9662.17307 10304.6587 10989.8664 11720.6369 12500 13331.1868 14217.6433 15163.0446 16171.3104 17246.6208]
+
+short=({
+ s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.0555s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.111s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.1665s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.222s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+}r9v0>0>*>*>0'1.4)
+
+middle=({
+ s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.0555s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.111s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.1665s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.222s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+}r9v0>0>*>*>0'2)
+
+long=({
+ s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.0555s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.111s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.1665s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+ 0.222s[n*]v0'0.003>2.4'0.0495>0'0.003e0p0'0.0555
+}r9v0>0>*>*>0'2.8)
+
+# Five families, two/three widths alternating; every cell has five sine slices.
+# Function arguments: five Hz-table positions, then two output-envelope levels.
+
+# OBJECT 01 / lattice step 9, mixture spacing 1.
+short10,11,12,13,14,4.8,1.2
+;0.35
+# OBJECT 02 / lattice step 24, mixture spacing 1.
+long25,26,27,28,29,1.1,4.5
+;0.8
+# OBJECT 03 / lattice step 15, mixture spacing 1.
+middle16,17,18,19,20,3.5,0.8
+;0.15
+# OBJECT 04 / lattice step 32, mixture spacing 3.
+short33,36,39,42,45,1.1,4.5
+;0.55
+# OBJECT 05 / lattice step 20, mixture spacing 3.
+long21,24,27,30,33,3.5,0.8
+;0.25
+# OBJECT 06 / lattice step 27, mixture spacing 3.
+middle28,31,34,37,40,4.8,1.2
+;0.35
+# OBJECT 07 / lattice step 12, mixture spacing 5.
+short13,18,23,28,33,3.5,0.8
+;0.8
+# OBJECT 08 / lattice step 35, mixture spacing 5.
+long36,41,46,51,56,4.8,1.2
+;0.15
+# OBJECT 09 / lattice step 22, mixture spacing 5.
+middle23,28,33,38,43,1.1,4.5
+;0.55
+# OBJECT 10 / lattice step 17, mixture spacing 2.
+short18,20,22,24,26,4.8,1.2
+;0.25
+# OBJECT 11 / lattice step 30, mixture spacing 2.
+long31,33,35,37,39,1.1,4.5
+;0.35
+# OBJECT 12 / lattice step 11, mixture spacing 2.
+middle12,14,16,18,20,3.5,0.8
+;0.8
+# OBJECT 13 / lattice step 26, mixture spacing 4.
+short27,31,35,39,43,1.1,4.5
+;0.15
+# OBJECT 14 / lattice step 18, mixture spacing 4.
+long19,23,27,31,35,3.5,0.8
+;0.55
+# OBJECT 15 / lattice step 33, mixture spacing 4.
+middle34,38,42,46,50,4.8,1.2

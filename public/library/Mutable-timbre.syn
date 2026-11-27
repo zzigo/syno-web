@@ -1,0 +1,8 @@
+# MUTABLE TIMBRE
+# ?165 chooses among s/t/a/q for each generated note.
+# ?[s a]165 restricts choices to sine and sawtooth.
+# Choices renew per loop. Same seed + loop count = same realization.
+# Timbre choice selects an atom; it does not morph waveforms over time.
+!vc
+S N32 U0.08 D1.1
+?[s a]165v3e0254'0.22

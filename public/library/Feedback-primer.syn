@@ -1,0 +1,59 @@
+# FEEDBACK DESK — one file, one active line at a time
+# Comment the current line with #, uncomment the next one, then Cmd+Enter.
+# Loop OFF lets one circuit finish; Cmd+. / Escape stops all sound and returns.
+# Explicit g makes {} a feedback return; without g, {} is a plain audio bus.
+# Inside a return = excitation; outside = gain g, filter f, cross-feed x,
+# output level v, and circuit lifetime 'seconds. d is omitted here:
+# the internal delay defaults to 12 ms, with a slight stereo asymmetry.
+
+# 01 — dry excitation, no return circuit: hear the seed alone.
+# s220v3e0254'0.15
+
+# 02 — first closed loop: a brief seed keeps returning, then decays.
+{s220v3e0254'0.15}g0.6f8v4'4
+
+# 03 — g0: the lowpass circuit has no recirculation; one filtered seed.
+# {s220v3e0254'0.15}g0f8v4'4
+
+# 04 — longer memory: raise return gain, keep the same seed/output level.
+# {s220v3e0254'0.15}g0.94f8v4'5
+
+# 05 — grow toward self-oscillation from a small noise seed.
+# {n2v0.03e0'0.05}g1.08f7v2'8
+
+# 06 — grow, then decay: change return gain without changing output level.
+# {n2v0.03e0'0.05}g1.08>0.6'8f7v2'8
+
+# 07 — filter the recirculating signal: brightness changes on each pass.
+# {n1v0.1e0'0.05}g1.05f8>2'8v2'8
+
+# 08 — x0 isolates the returns; x1 feeds each side into the other.
+# {s220v2p-1e0254'0.15}g0.94f8x0>1'6v4'6
+
+# 09 — two excitations enter ONE shared circuit.
+# {s220v2p-0.6e0254'0.2 t330v1p0.6e0254'0.2}g0.94f7v3'6
+
+# 10 — a sustained injection: contrast this with a short starting seed.
+# {n2v0.1e0'3}g0.85f5v3'6
+
+# 11 — chop the INJECTION; the return continues between its pulses.
+# {s165v1h2e0'3}g0.94f7v3'6
+
+# 12 — chop the complete OUTPUT; the internal circuit still runs.
+# ({s165v1e0'3}g0.94f7v3'6)h2
+
+# 13 — add one reverb after the complete return circuit.
+# ({s220v2e0254'0.15}g0.94f7v3'6)r4
+
+# 14 — fade the COMPLETE result, including the reverb tail.
+# (({s220v2e0254'0.15}g0.94f7v3'6)r4)v9>0'10
+
+# 15 — two independent circuits: braces do not share their return paths.
+# {s165v2e0254'0.15}g0.92f6v3'6 {t247.5v1e0254'0.15}g0.95f7v3'6
+
+# 16 — explicit FM excitation, not a nested feedback circuit.
+# {t82.5:s27.5i4v1e0254'0.2}g1.04f6v2'8
+
+# Digital silence is not a seed. g changes regeneration; v changes listening level.
+# The audible result also depends on filtering, saturation and circuit delay.
+# Nested () compose processors. Actual refeeding requires an explicit g return.

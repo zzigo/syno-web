@@ -1,0 +1,8 @@
+<!doctype html><meta charset="utf-8"><title>Chopper visual sync</title><button id="start">Verify native gate sync</button><pre id="report">Ready</pre>
+<script type="module">
+import {AudioEngine} from '/src/audio/engine.ts';import {compile} from '/src/core/parser.ts';
+const button=document.querySelector('#start'),report=document.querySelector('#report'),engine=new AudioEngine();
+button.onclick=async()=>{button.disabled=true;engine.loop=false;await engine.start(compile("s220v2e0h9'3"));let open=0,closed=0,maxOpen=0,maxClosed=0,since;
+const tick=()=>{const event=engine.visualEvents[0],level=engine.level,time=engine.time;if(event){if(event.gateLevel>.99){open++;maxOpen=Math.max(maxOpen,level);since=undefined;}else if(event.gateLevel<.001){since??=time;if(time-since>.025){closed++;maxClosed=Math.max(maxClosed,level);}}else since=undefined;}
+report.textContent=JSON.stringify({time,gate:event?.gateLevel,open,closed,maxOpen,maxClosed},null,2);if(time>=2.9||!engine.running){engine.stop();report.textContent=JSON.stringify({complete:true,open,closed,maxOpen,maxClosed,measurement:'Real-time analyser readings are diagnostic; use chop-offline-verify.html to compare native samples with gate phase'},null,2);button.disabled=false;return;}requestAnimationFrame(tick);};tick();};window.addEventListener('pagehide',()=>engine.stop());
+</script>

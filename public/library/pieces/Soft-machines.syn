@@ -1,0 +1,107 @@
+# SOFT MACHINES / original lyric song / 144 BPM / 96 bars / 2:40 / Loop OFF.
+# Psytrance pulse, vaporwave harmony, plastic digital debris; an intimate chorus inside the machine.
+# Original speculative-fiction lyrics: future leaks, mineral memory and obsolete consumer dreams.
+# First Play prepares 12 local Kokoro phrases. English af_heart; written text stays local.
+# l_ = sung/recited verse + yellow cinema subtitles. w0 raw voice ... w9 vocoder.
+# Read one instrument per row; ; advances sections by their actual duration.
+!b144 !sa
+
+# INSTRUMENTS / each rhythm row spans one 4/4 bar.
+kick=((s74>44'0.08v4e0092'n4p0)4)
+bass=(a[~ 55 55 82.5 ~ 55 49 55]v1.1e0012'n8f2.4>4'0.06p-0.08)
+hats=(n[~ 1 ~ 1 ~ 1 ~ 1]v0.35e0001'n8f8.4p0.45r1)
+snare=(n[~ 1 ~ 1]v0.65e0012'n4f6.5p-0.2r2)
+arp=(!sc uDOR o110 a[n1 3 5 8 7 5 3 2]v0.32e1354'n8f3>7p0.5d0.208333r2)
+
+# HARMONIC FIELD / two continuous voices / four bars.
+pad=(
+ !sc uJMI o110 t[n1 5 3 8 7 3 5 2]v0.55e1354'n2r5p-0.55
+ u31 o110 a[n1 11 19 31 27 19 11 1]v0.16e1354'n2f3.6r5p0.55
+)
+# Four-bar cells. All clocks share the same written bar grid.
+rhythm=((kick bass hats snare)4)
+veil=((hats arp)4 pad)
+roll=((n[1 1 1 1 1 1 1 1]v0.35e0001'n8f4>8p-0.3>0.3)4)
+riser=(n2v0'b15>0.55'0>0'b1f2>8'b16e0p-0.6>0.6'b16)
+
+# VOICE / each line spans four bars: eight half notes, or sixteen quarter notes.
+# w transitions follow the full verse. Low wet amounts retain intelligible direct voice.
+opening=(!sc l_[Tomorrow is leaking through the ceiling of the mall.]:s[110 165 147 220 196 165 147 110]w1>3v3'n2r3)
+first=(!sc l_[We bought a second sunrise from a screen beneath the sea.]:a[110 165 220 247 220 196 165 147]w2>5v3'n2r2)
+second=(!sc l_[The escalators carry little futures in their teeth.]:s[147 165 196 220 165 147 110 147]w4>2v3'n2r2)
+third=(!sc l_[Your face becomes a password that the weather won't forget.]:t[110 147 165 220 247 220 165 147]w2>6v3'n2r3)
+fourth=(!sc l_[I keep a tender copy where the signal used to hurt.]:a[165 196 220 247 220 165 147 110]w5>2v3'n2r2)
+under=(!sc l_[Beneath the polished floor, the black earth learns our names.]:s[110 123.5 147 165 147 123.5 110 82.5]w1>4v3'n2r4)
+stay=(!sc l_[Stay with me until the advertisements begin to dream.]:t[147 165 220 196 165 147 123.5 110]w2>5v3'n2r4)
+mouth=(!sc l_[Do not wake the city. Let it grow another mouth.]:a[110 147 165 220 247 294 330 440]w2>8v3'n2r3)
+# Two open wet/dry endpoints: hooka2,8 goes from mostly voice to mostly machine.
+hooka=(!sc l_[Let the future enter. Leave a body at the door.]:a[220 220 247 220 165 165 196 220 294 294 247 220 196 165 147 165]w*>*v3.5'n4r2)
+hookb=(!sc l_[We are the soft machines that sing beneath the floor.]:s[165 165 196 220 247 247 220 196 165 147 165 196 220 196 165 110]w*>*v3.5'n4r2)
+closing=(!sc l_[When the last screen closes, there is still a little light.]:s[220 196 165 147 165 147 123.5 110]w5>0v3'n2r4)
+# A final raw-voice fragment, rather than another synthetic crescendo.
+residue=(l_[A little light.]v2'6.666666666667r4)
+
+# 01 INTRO / 8 bars / a voice is heard before the whole dance machine arrives.
+intro=({
+ (kick hats)8
+ (pad)2
+ opening
+}f3>7r2)
+
+# 02 VERSE / 16 bars / four lyrics over an increasingly legible groove.
+verse=({
+ (rhythm)4
+ (pad)4
+ (first ; second ; third ; fourth)
+}f5>8r1)
+
+# 03 BREAKDOWN / 8 bars / remove kick and bass; keep a damaged harmonic shelter.
+breakone=({
+ (veil)2
+ (under ; stay)
+}f7>3r5p-0.3>0.3)
+
+# 04 BUILD / 8 bars / alternate rising voice and a familiar line, without swallowing consonants.
+buildone=({
+ (roll riser)2
+ (pad)2
+ (mouth ; stay)
+}f3>8d0.208333r2)
+
+# 05 DROP / 16 bars / the hook returns twice; wet/dry becomes part of the composition.
+dropone=({
+ (rhythm arp)4
+ (pad)4
+ (hooka2,7 ; hookb5,2 ; hooka3,8 ; hookb6,3)
+}f8r2)
+
+# 06 SECOND BREAKDOWN / 8 bars / expose the affection inside the decaying system.
+breaktwo=({
+ (pad)2
+ (hats)8
+ (fourth ; under)
+}f6>2r5p0.3>-0.3)
+
+# 07 SECOND BUILD / 8 bars / two short-memory returns sit behind the text.
+buildtwo=({
+ (roll riser)2
+ (pad)2
+ {n2v0.015'0.03e0}g1.04d0.013f5v0.5'b32
+ (stay ; mouth)
+}f3>8r3)
+
+# 08 SECOND DROP / 16 bars / same song, a brighter apparatus, more voice on the last answer.
+droptwo=({
+ (rhythm arp)4
+ (pad)4
+ (hooka2,8 ; hookb7,3 ; hooka4,8 ; hookb6,0)
+}f8>6r3)
+
+# 09 OUTRO / 8 bars / voice returns to its unprocessed body while percussion dissolves.
+outro=({
+ (kick hats)8
+ (pad)2
+ (closing ; residue)
+}f6>2r4v9'b28>0'b4)
+
+intro ; verse ; breakone ; buildone ; dropone ; breaktwo ; buildtwo ; droptwo ; outro

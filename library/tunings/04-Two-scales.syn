@@ -1,0 +1,5 @@
+# TUNINGS 04 / scoped u and o: neither layer overwrites the other.
+# TRY u31 in left or uHEX in right. Same root makes the differences clearer.
+left=(uPTH o110 G N16 U0.05 D0.9 s165v0.7e0254'0.3p-0.65r2)
+right=(uJMA o110 A N16 U0.08 D0.9 t165v0.6e0254'0.3p0.65r2)
+left right

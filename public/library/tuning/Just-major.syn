@@ -1,0 +1,4 @@
+# Exact 5-limit major; the last degree wraps to the next octave.
+!b108 !sa
+uJMA o220
+t[n1 2 3 4 5 6 7 8]:s55i0.3v2e0254'n8

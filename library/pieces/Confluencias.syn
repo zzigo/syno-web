@@ -1,0 +1,166 @@
+# CONFLUENCIAS
+# Six parts / 4:00 plus effect tails / 3-10 principal voices / seed 3181.
+# Play once. Pieces turns LOOP off when loaded.
+# A shared 110 : 165 : 220 cell survives every transformation.
+# I  00:00 Umbral           - a common breath acquires edges.
+# II 00:40 Desdoblamiento   - the same breath branches and changes skin.
+# III01:20 Gravedad         - attraction, restraint and pulse pressure.
+# IV 02:00 Caida            - a descent that cannot find its floor.
+# V  02:40 Garganta         - the room feeds itself; ten voices meet.
+# VI 03:20 Memoria          - the branches remember one pitch.
+# The final L rewrite splits three paired states into six sequential parts.
+# Named expressions scope their growth controls; no state leaks between parts.
+!vc
+
+# A quiet, homorhythmic three-voice inhalation; two attacks, then recur.
+flutter=(
+ s220v0.32e0143'0.12 t330v0.25e0143'0.12 s440v0.22e0143'0.12
+ 0.38s220v0.32e0143'0.12 0.38t330v0.25e0143'0.12 0.38s440v0.22e0143'0.12
+)
+
+# The tissue is shared, not presented as independent demonstrations.
+leaf=(G N7 U0.08 D1.1
+ 4s165v0.85e0154'0.15f5.5
+ 10t220v0.75e0154'0.15f5
+)
+runner=(S N10 U0.12 D1.1
+ 17?[s a]165v0.65e0154'0.05f4.8
+ 25?[s t]220v0.6e0154'0.05f4.3
+)
+clone=(A N5 U0.18 D0.8
+ 31?[s t]?[165:220]v0.65e0154'0.05
+ 36t165:s55i0.4>2'0.05v0.65e0154'0.05
+)
+apex=(H N8 U0.08 D1
+ 3a110v0.5e0154'0.12f3.8
+ 9t165:s41.25i1>3'0.12v0.65e0154'0.12
+)
+pull=(R N8 U0.12 D1.3
+ 16t110v0.65e0154'0.12
+ 23s165:t55i0.5>2'0.12v0.6e0154'0.12
+)
+root=(K N2 U0.08 D1.2
+ 30?[s t]82.5v0.7e0154'0.05
+ 35s110v0.65e0154'0.05
+)
+
+
+parta=({
+ # I / UMBRAL: three continuous strands; fragile common attacks.
+ s110v0'3>0.7'29>0.45'8p-0.55e1395
+ t165v0'4>0.55'28>0.4'8p0.55e1395
+ s220v0'5>0.45'27>0.35'8p0e1395
+ (flutter)4
+ 8s110v0.75p-0.65e0254'0.32f6
+ 8t110v0.75p0e0254'0.32f6
+ 8a110v0.75p0.65e0254'0.32f6
+ 20s165v0.75p-0.65e0254'0.32f6
+ 20t165v0.75p0e0254'0.32f6
+ 20a165v0.75p0.65e0254'0.32f6
+ 32s220v0.75p-0.65e0254'0.32f6
+ 32t220v0.75p0e0254'0.32f6
+ 32a220v0.75p0.65e0254'0.32f6
+}r1.2)
+
+
+partb=({
+ # II / DESDOBLAMIENTO: a moving canon, still tied to the opening cell.
+ s110v0.45>0.8'40p-0.65>0.2'40e1395
+ t165v0.4>0.7'40p0.6>-0.3'40e1395
+ s220:t55i0.2>2'40v0.35>0.65'40p0e1395
+ leaf runner clone
+ 8s110v0.9p-0.65e0254'0.32f6
+ 8t165v0.9p0e0254'0.32f6
+ 8a220v0.9p0.65e0254'0.32f6
+ 20s165v0.9p-0.65e0254'0.32f6
+ 20t220v0.9p0e0254'0.32f6
+ 20a330v0.9p0.65e0254'0.32f6
+}d0.31r2.2)
+
+
+partc=({
+ # III / GRAVEDAD: a lower centre and a synchronized closing diaphragm.
+ s82.5v0.65>0.85'40p-0.45e1395
+ t110v0.55>0.75'40p0.45e1395
+ a165v0.35>0.55'40p0e1395f3.5
+ apex pull root
+ 12n3v0>0.4>0'3p-0.8>0.8'3e0
+ {n1v0.008'0.04e0}d0.012g0.86>1.04'32f3.2>2.2'40x0.4v0.6'40
+ 38s165v0.8p-0.65e0254'0.32f6
+ 38t165v0.8p0e0254'0.32f6
+ 38a165v0.8p0.65e0254'0.32f6
+}h6>1.2'40r3.5>1.5'40)
+
+
+partd=({
+ # IV / CAIDA: the branches stretch into octave-related descending layers.
+ s55v0.4e1395'40p-0.5
+ t110v0.35e1395'40p0.5
+ s165v0.3e1395'40p0
+ 0s1760^55'20v0>0.134>0.5>1>1.5>1.866>2>1.866>1.5>1>0.5>0.134>0'20p-0.6>0.6'20e0
+ 3.33333333s1760^55'20v0>0.134>0.5>1>1.5>1.866>2>1.866>1.5>1>0.5>0.134>0'20p-0.6>0.6'20e0
+ 6.66666667s1760^55'20v0>0.134>0.5>1>1.5>1.866>2>1.866>1.5>1>0.5>0.134>0'20p-0.6>0.6'20e0
+ 10s1760^55'20v0>0.134>0.5>1>1.5>1.866>2>1.866>1.5>1>0.5>0.134>0'20p-0.6>0.6'20e0
+ 13.3333333s1760^55'20v0>0.134>0.5>1>1.5>1.866>2>1.866>1.5>1>0.5>0.134>0'20p-0.6>0.6'20e0
+ 16.6666667s1760^55'20v0>0.134>0.5>1>1.5>1.866>2>1.866>1.5>1>0.5>0.134>0'20p-0.6>0.6'20e0
+ 37s110v0.7p-0.65e0254'0.4f6
+ 37t110v0.7p0e0254'0.4f6
+ 37a110v0.7p0.65e0254'0.4f6
+ 38.3s165v0.7p-0.65e0254'0.4f6
+ 38.3t165v0.7p0e0254'0.4f6
+ 38.3a165v0.7p0.65e0254'0.4f6
+}r2)
+
+
+parte=({
+ # V / GARGANTA: resonance takes the foreground; five attacks meet two returns.
+ s82.5v0.5>0.8'40p-0.6e1395
+ t110v0.45>0.7'40p0.6e1395
+ a165v0.35>0.6'40p0e1395f4.2
+ {
+  n2v0.025p-1'40e0
+  n1v0.025p1'40e0
+ }b165>145'32,660>620'32q0.25,0.2k2.2>4'32g0.72>0.82'32,0.68>0.75'32d0.013,0.029x0.25>0.35'32v0'4>3.6'24>0.6'12
+ 8s110v1.85p-0.65e0254'0.8f6
+ 8t165v1.85p-0.325e0254'0.8f6
+ 8a220v1.85p0e0254'0.8f6
+ 8q330v1.85p0.325e0254'0.8f6
+ 8s440v1.85p0.65e0254'0.8f6
+ 16s165v1.85p-0.65e0254'0.8f6
+ 16t220v1.85p-0.325e0254'0.8f6
+ 16a330v1.85p0e0254'0.8f6
+ 16q440v1.85p0.325e0254'0.8f6
+ 16s660v1.85p0.65e0254'0.8f6
+ 24s220v1.85p-0.65e0254'0.8f6
+ 24t220v1.85p-0.325e0254'0.8f6
+ 24a220v1.85p0e0254'0.8f6
+ 24q220v1.85p0.325e0254'0.8f6
+ 24s220v1.85p0.65e0254'0.8f6
+ 32s110v1.85p-0.65e0254'0.8f6
+ 32t165v1.85p-0.325e0254'0.8f6
+ 32a220v1.85p0e0254'0.8f6
+ 32q293.333333v1.85p0.325e0254'0.8f6
+ 32s330v1.85p0.65e0254'0.8f6
+}h3>0.1'32r2>6'40)
+
+
+partf=({
+ # VI / MEMORIA: the same three strands finally agree, then disappear.
+ s110v0.7'4>0.9'28>0'8p-0.5>0'32e0f5>1'40
+ t165^110'32v0.7'4>0.9'28>0'8p0.5>0'32e0f5>1'40
+ s220^110'32v0.7'4>0.9'28>0'8p0e0f5>1'40
+ 4s110v0.55p-0.65e0254'0.38f6
+ 4t165v0.55p0e0254'0.38f6
+ 4a220v0.55p0.65e0254'0.38f6
+ 16s110v0.55p-0.65e0254'0.38f6
+ 16t110v0.55p0e0254'0.38f6
+ 16a110v0.55p0.65e0254'0.38f6
+ 28s110v0.55p-0.65e0254'0.38f6
+ 28t110v0.55p0e0254'0.38f6
+ 28a110v0.55p0.65e0254'0.38f6
+}r4>0'40)
+
+
+# One rewrite: ABC -> AB CD EF. The pairs are opening/branching,
+# pressure/fall, throat/memory. Each binding lasts forty seconds.
+L1:ABC A>AB B>CD C>EF @A=parta @B=partb @C=partc @D=partd @E=parte @F=partf

@@ -1,0 +1,17 @@
+{
+  "upstream": "ORF workspace",
+  "declaredLicense": "MIT",
+  "scope": "Browser SDK and type contracts only; no inference backend",
+  "files": [
+    {
+      "upstreamPath": "packages/client/src/index.ts",
+      "snapshotPath": "vendor/orf-client/index.ts",
+      "sha256": "ce852643ee6132deb009e916d72897a4da05fcfc509bcb984213e19bb03b7026"
+    },
+    {
+      "upstreamPath": "packages/core/src/types.ts",
+      "snapshotPath": "vendor/orf-core/types.ts",
+      "sha256": "04cd6cfc051bee934afbffe761dd896a0de5ef7d68506baa083c9748c5944cfc"
+    }
+  ]
+}

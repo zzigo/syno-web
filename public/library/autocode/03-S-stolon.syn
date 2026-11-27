@@ -1,0 +1,11 @@
+# Stolon · spatial cells, rests and echoes
+# S342& : geometry N8 U0.4444 D0.7444; no static population expansion.
+# Play starts agentic growth; open Agents to choose model or behavior.
+# Only the parenthesized music is rewritten. Bottom AI shows input/output tokens.
+# Pause / Undo mutation in Agents; Cmd+. stops sound and blocks further adoption.
+!b100 !sx
+S342& (
+uPTH o110
+t[n1  3 5 ~  4]v0.5e0254'n8p-0.6d0.3
+a[n1 ~ 4  7 3]v0.3f4e0254'n8p0.6r2
+)

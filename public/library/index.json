@@ -1,0 +1,740 @@
+[
+  {
+    "name": "A · detached inheritance",
+    "detail": "A whole motif inside each maternal/daughter capsule · N/U/D",
+    "file": "A-capsule-motif.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "A& · rhythmic and timbral births",
+    "detail": "Proportional daughter rhythm · probability rests · related new timbres",
+    "file": "autocode/08-A-rhythmic-birth.syn",
+    "category": "Autocode"
+  },
+  {
+    "name": "07 · Biome in a room",
+    "detail": "Metres / room-shaped growth / physical bodies + contour",
+    "file": "spatial/07-Room-organism.syn",
+    "category": "Spatial output",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "08 · Four wires, three places",
+    "detail": "Multi-hop raw p / co-located speakers retain separate IDs",
+    "file": "spatial/08-Raw-path.syn",
+    "category": "Spatial output",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "09 · Layout desk",
+    "detail": "Stereo / raw rings / surround / overhead presets · compare roles",
+    "file": "spatial/09-Layout-desk.syn",
+    "category": "Spatial output",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "01 · Raw speakers",
+    "detail": "One signal per output · explicit IDs · no spatial algorithm",
+    "file": "spatial/01-Raw-speakers.syn",
+    "category": "Spatial output",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "02 · Across the wires",
+    "detail": "p[o1>2] · raw linear output crossfades",
+    "file": "spatial/02-Raw-crossfades.syn",
+    "category": "Spatial output",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "03 · XYZ trajectories",
+    "detail": "p[423>111] / component ramps / DBAP",
+    "file": "spatial/03-XYZ-trajectories.syn",
+    "category": "Spatial output",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "04 · Output matrix",
+    "detail": "Direct output gains · no normalization",
+    "file": "spatial/04-Output-matrix.syn",
+    "category": "Spatial output",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "05 · A return between objects",
+    "detail": "Whole feedback bus · reverb / chop / raw output crossfade",
+    "file": "spatial/05-Shared-return.syn",
+    "category": "Spatial output",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "06 · Forest beside the room",
+    "detail": "Eight outputs · parameter mappings independent of spatial p",
+    "file": "spatial/06-Forest-and-room.syn",
+    "category": "Spatial output",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Stocky · ramp rooms",
+    "detail": "Shared v contours / strong horizontal pinch / implicit section names / detachable FOLD",
+    "file": "Stocky-ramps.syn",
+    "category": "Visuals"
+  },
+  {
+    "name": "Three rooms · named sections",
+    "detail": "!t title / ;intro / Cmd brackets / Stocky score / F follow",
+    "file": "Named-sections.syn",
+    "category": "Synthesis"
+  },
+  {
+    "name": "Random · exact choices and ranges",
+    "detail": "Space = comma / colon = continuous / frequency, time and controls",
+    "file": "Random-choices.syn",
+    "category": "Randomness"
+  },
+  {
+    "name": "Shared duration · seven tones",
+    "detail": "One bus gesture / missing gates inherit / written durations retained",
+    "file": "buses/04-Shared-duration.syn",
+    "category": "Buses & chains",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Studie II · Hajdu → syNo",
+    "detail": "380 mixture events / 1,900 sinusoids / shared chamber / ~2:56",
+    "file": "pieces/Studie-II-Hajdu.syn",
+    "category": "Pieces",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Absolute Hz · one table",
+    "detail": "u[f ...] / exact discrete frequencies / indexed voices / growth",
+    "file": "tunings/16-Absolute-Hz.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "After Studie I · spectral miniature",
+    "detail": "Original procedural study / pure sine spectra / 42 s / not a score reconstruction",
+    "file": "pieces/After-Studie-I.syn",
+    "category": "Pieces",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "After Studie II · tape apparatus",
+    "detail": "Five-tone mixtures / hear only the chamber tail / original schedule",
+    "file": "pieces/After-Studie-II.syn",
+    "category": "Pieces",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Soft machines · lyric song",
+    "detail": "2:40 / 144 BPM / psytrance-vaporwave / original lyrics / cinema captions",
+    "file": "pieces/Soft-machines.syn",
+    "category": "Pieces",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Cinema · yellow lyric subtitles",
+    "detail": "l_ / synchronized verse cues / raw-to-vocoder w blend",
+    "file": "lyrics/04-Cinema.syn",
+    "category": "Lyrics & voice",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Output desk · named functions",
+    "detail": "Eight minimal chains / comment-uncomment / explicit feedback",
+    "file": "buses/01-Output-desk.syn",
+    "category": "Buses & chains",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Parallel machines · nested chains",
+    "detail": "Three instruments / independent branches / shared output mix",
+    "file": "buses/02-Parallel-machines.syn",
+    "category": "Buses & chains",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Return and voice · shared chain",
+    "detail": "Feedback / local singing / branch pan / post-return filter",
+    "file": "buses/03-Return-and-voice.syn",
+    "category": "Buses & chains",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Voice · first verse",
+    "detail": "Local Kokoro / literal text / timed phrase / effects",
+    "file": "lyrics/01-Voice.syn",
+    "category": "Lyrics & voice",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Singing · continuous verse",
+    "detail": "One verse across a tuned carrier melody / vocoder",
+    "file": "lyrics/02-Singing.syn",
+    "category": "Lyrics & voice",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Written prosody · word by word",
+    "detail": "Exact word or syllable gates / musical figures / relative waits",
+    "file": "lyrics/03-Written-prosody.syn",
+    "category": "Lyrics & voice",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Pulse rows · drum-and-bass primer",
+    "detail": "170 BPM / instrument rows / intro → groove → breaks → drops → outro",
+    "file": "pieces/Pulse-rows.syn",
+    "category": "Pieces",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "PLAY · keyboard and touch",
+    "detail": "Cmd E / Q-A pairs / eleven values from cursor / custom faders",
+    "file": "PLAY-values.syn",
+    "category": "Synthesis"
+  },
+  {
+    "name": "Sections · ; and relative waits",
+    "detail": "Parallel growths / finite repetitions / next section / overlapping tails",
+    "file": "Sections.syn",
+    "category": "Synthesis",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Generator morph · @g",
+    "detail": "Ordered harmonic blends · s/t/a/q and all 16 FM pairs",
+    "file": "G-generator-morph.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "Start here · feedback desk",
+    "detail": "16 minimal comment/uncomment cases · one file · also in Help",
+    "file": "Feedback-primer.syn",
+    "category": "Feedback & buses",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Growing organism · keep the past",
+    "detail": "Autonomous additive writing · earlier music and loop remain intact",
+    "file": "autocode/08-Growing-organism.syn",
+    "category": "Autocode"
+  },
+  {
+    "name": "FM feedback · whole-output fade",
+    "detail": "FM excitation / return / reverb / postfix bus volume",
+    "file": "Feedback-fm-output-fade.syn",
+    "category": "Feedback & buses"
+  },
+  {
+    "name": "Nested groups · shared chain",
+    "detail": "Two returns / shared chop / reverb / final fade",
+    "file": "Feedback-nested-group-chain.syn",
+    "category": "Feedback & buses"
+  },
+  {
+    "name": "G& · phyllotaxis",
+    "detail": "Interlaced tuned cells · G234&",
+    "file": "autocode/01-G-phyllotaxis.syn",
+    "category": "Autocode"
+  },
+  {
+    "name": "A& · apomixis",
+    "detail": "Paired timbral clones · A143&",
+    "file": "autocode/02-A-apomixis.syn",
+    "category": "Autocode"
+  },
+  {
+    "name": "S& · stolon",
+    "detail": "Spatial cells, rests and echoes · S342&",
+    "file": "autocode/03-S-stolon.syn",
+    "category": "Autocode"
+  },
+  {
+    "name": "H& · apical dominance",
+    "detail": "Low stem and upper FM buds · H433&",
+    "file": "autocode/04-H-apical.syn",
+    "category": "Autocode"
+  },
+  {
+    "name": "R& · tropism",
+    "detail": "Opposing pan / frequency trajectories · R254&",
+    "file": "autocode/05-R-tropism.syn",
+    "category": "Autocode"
+  },
+  {
+    "name": "K& · colonisation",
+    "detail": "Sparse cells and noisy attractors · K354&",
+    "file": "autocode/06-K-colonisation.syn",
+    "category": "Autocode"
+  },
+  {
+    "name": "L& · living grammar",
+    "detail": "Mutate productions, turns and branches · FM / noise",
+    "file": "autocode/07-L-living-grammar.syn",
+    "category": "Autocode"
+  },
+  {
+    "name": "Growth · parenthesized scopes",
+    "detail": "G234 and H123 grow only their own material",
+    "file": "Growth-scoped.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "Variables · crossing pans",
+    "detail": "Untimed transitions follow each note gate · two clonal growths",
+    "file": "Variables-pan.syn",
+    "category": "Effects"
+  },
+  {
+    "name": "One n · pitch positions",
+    "detail": "One-based positions · nested subdivisions · octave registers",
+    "file": "Pitch-positions.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "Questions inside cells",
+    "detail": "Random pitch / time / chopper · nested rhythm",
+    "file": "Questions-in-cells.syn",
+    "category": "Randomness"
+  },
+  {
+    "name": "Autocode · local G",
+    "detail": "Visible and reversible cell mutation · open Agents to monitor",
+    "file": "Mutation-local.syn",
+    "category": "Autocode"
+  },
+  {
+    "name": "Autocode · agentic &G",
+    "detail": "Opt-in AI region · existing gateway · monitor in Agents",
+    "file": "Mutation-agent.syn",
+    "category": "Autocode"
+  },
+  {
+    "name": "Input · delay",
+    "detail": "i = i1 · input trim · 30-second microphone study",
+    "file": "Input-delay.syn",
+    "category": "Input"
+  },
+  {
+    "name": "Input · chopper",
+    "detail": "ih3 · channel 1 · gated input and reverb",
+    "file": "Input-chop.syn",
+    "category": "Input"
+  },
+  {
+    "name": "A234 · first compact growth",
+    "detail": "Three digits = N/U/D · exact equivalences in comments",
+    "file": "A234-starter.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "Compact forest · A234 G442 H532",
+    "detail": "Three tuning scopes · compact growth controls",
+    "file": "Compact-forest.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "00 · Scale desk",
+    "detail": "All aliases + extended cents / ratios catalog · swap one u line",
+    "file": "tunings/00-Scale-desk.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "01 · One scale, one growth",
+    "detail": "First quantized canopy · compare uJMA / uPTH / u31",
+    "file": "tunings/01-One-growth.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "02 · Hear the degrees",
+    "detail": "Eight scale degrees, then the same tuning in an apical growth",
+    "file": "tunings/02-Degrees-and-space.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "03 · Comma drift",
+    "detail": "Two clonal populations separated by 81/80",
+    "file": "tunings/03-Comma-drift.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "04 · Two scales",
+    "detail": "Pythagorean sine / just-major triangle · same root",
+    "file": "tunings/04-Two-scales.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "05 · Three scales",
+    "detail": "19 EDO / 31 EDO / just minor · G / H / R",
+    "file": "tunings/05-Three-scales.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "06 · Four-scale forest",
+    "detail": "Four simultaneous populations · G / A / S / K · s / t / a / q",
+    "file": "tunings/06-Four-scales.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "07 · Two unequal grids",
+    "detail": "Pelog / Slendro cents · nearest eligible branch traversal",
+    "file": "tunings/07-Pelog-Slendro.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "08 · Hexany branches",
+    "detail": "Six just degrees · apical depth-first / breadth-first dialogue",
+    "file": "tunings/08-Hexany.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "09 · Beyond the octave",
+    "detail": "Bohlen-Pierce versus 3/1 custom ratios · two roots",
+    "file": "tunings/09-Tritave.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "10 · Pitch and grain",
+    "detail": "Harmonic tuning / noise timbre mapped by growth XYZ",
+    "file": "tunings/10-Harmonic-noise.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "11 · Build a tuning",
+    "detail": "User cents in two contrasting growth traversals",
+    "file": "tunings/11-Custom-cents.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "12 · Four tuned cells",
+    "detail": "Four scales / four pulse lengths / rests / nested tuplets",
+    "file": "tunings/12-Polytuned-cells.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "13 · Forest with rhythmic undergrowth",
+    "detail": "Three quantized growths + three tuned cells · independent timing / FM / noise",
+    "file": "tunings/13-Tuned-forest-and-cells.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "14 · Four worlds in motion",
+    "detail": "Advanced · four tuning systems / four growths / three time-warped cells",
+    "file": "tunings/14-Four-worlds.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "01 · A pulse",
+    "detail": "Four identical pitches · hear note durations",
+    "file": "rhythm/01-Pulse.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "02 · Rests and accents",
+    "detail": "A four-beat cell · ~ is silence · aligned intensity accents",
+    "file": "rhythm/02-Rests.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "03 · Divide a pulse",
+    "detail": "Duple / triplet / quintuple subdivisions in one line",
+    "file": "rhythm/03-Nested.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "04 · Three against four",
+    "detail": "Both layers fill the same four beats · exact beat fractions",
+    "file": "rhythm/04-Three-against-four.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "05 · Spatial cells",
+    "detail": "Visible spacing as rhythm · ixi-inspired two-row score",
+    "file": "rhythm/05-Spatial-cells.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "06 · Five against eight",
+    "detail": "Five-note pitch list / eight accents · 40-step return",
+    "file": "rhythm/06-Polymeter.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "07 · Together / apart",
+    "detail": "Three voices share onsets while their notes and timbres diverge",
+    "file": "rhythm/07-Homorhythm.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "08 · Rhythm inside a sustained sound",
+    "detail": "No oscillator retriggers · volume cells / FM / smooth filter",
+    "file": "rhythm/08-Continuous-timbre.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "09 · Time in transition",
+    "detail": "Accelerando / ritardando · durations interpolate per cell",
+    "file": "rhythm/09-Time-warp.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "10 · Cells beneath a canopy",
+    "detail": "Two tuned arpeggiators + quantized growth + noise rhythm",
+    "file": "rhythm/10-Rhythm-and-growth.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "11 · Mutable canon",
+    "detail": "Three cells · two named future rotators · three tuning systems",
+    "file": "rhythm/11-Future-canon.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "12 · Moving matter",
+    "detail": "Advanced · five voices / time warps / smooth FM, filter, pan and chop",
+    "file": "rhythm/12-Transitional-polyphony.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "31 EDO",
+    "detail": "Equal divisions · scale-degree sequences",
+    "file": "tuning/Equal-divisions.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "Just major",
+    "detail": "uJMA · exact ratios · articulated FM",
+    "file": "tuning/Just-major.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "Custom cents",
+    "detail": "u[0 100 200 500 600] · continuous voice",
+    "file": "tuning/Custom-cents.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "Bohlen–Pierce",
+    "detail": "uBPJ · explicit 3:1 period",
+    "file": "tuning/Bohlen-pierce.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "Custom period",
+    "detail": "Ratio list · explicit tritave",
+    "file": "tuning/Custom-period.syn",
+    "category": "Tunings"
+  },
+  {
+    "name": "Continuous timbre",
+    "detail": "!sc · living voice · independent parameter lengths",
+    "file": "sequences/Continuous.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "Arpeggiator",
+    "detail": "!sa · one ADSR per step",
+    "file": "sequences/Articulated.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "Nested tuplets",
+    "detail": "Three inside one pulse · note-value durations",
+    "file": "sequences/Tuplets.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "Spatial score",
+    "detail": "!sx · spaces as silent steps",
+    "file": "sequences/Spatial.syn",
+    "category": "Arpeggiators & sequences"
+  },
+  {
+    "name": "Reich · future",
+    "detail": "Two Dorian cells · timed rotations of reichp",
+    "file": "pieces/Reich-future.syn",
+    "category": "Pieces",
+    "loop": true,
+    "seed": 3181
+  },
+  {
+    "name": "Growth writing",
+    "detail": "Compact and precise controls · XYZ routing · DFS / BFS",
+    "file": "Growth-compact.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "L · compact",
+    "detail": "Three digits · generations / angle / taper",
+    "file": "L-compact.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "Confluencias",
+    "detail": "Six parts · 4:00 · 3–10 voices · play once",
+    "file": "pieces/Confluencias.syn",
+    "category": "Pieces",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Corte Cero",
+    "detail": "2:00 · 160 BPM · evolving feedback / sub pressure · play once",
+    "file": "pieces/Corte-cero.syn",
+    "category": "Pieces",
+    "loop": false,
+    "seed": 3181
+  },
+  {
+    "name": "Golden canopy",
+    "detail": "G · phyllotaxis",
+    "file": "G-phyllotaxis.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "Clonal drift",
+    "detail": "A · apomixis",
+    "file": "A-apomixis.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "Stolon",
+    "detail": "S · runners and ramets",
+    "file": "S-stolon.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "Apical dominance",
+    "detail": "H · inhibited lateral buds",
+    "file": "H-apical.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "Tropism",
+    "detail": "R · moving attractor",
+    "file": "R-tropism.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "Roots",
+    "detail": "K · colonisation",
+    "file": "K-colonisation.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "Forest",
+    "detail": "Three parallel growths · FM canopy / noise roots / mutable vines · pinch zoom",
+    "file": "Forest.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "L · Tree",
+    "detail": "Bracketed grammar · branching noise and FM · 25°",
+    "file": "L-tree.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "L · Leaf",
+    "detail": "Bilateral veins · spine and tips · noise / complex timbres · 55°",
+    "file": "L-leaf.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "L-system",
+    "detail": "L · rewriting / musical bindings",
+    "file": "L-rewriting.syn",
+    "category": "Growth"
+  },
+  {
+    "name": "Shepard descent",
+    "detail": "Six overlapping voices · logarithmic glide",
+    "file": "Shepard-continuous.syn",
+    "category": "Synthesis"
+  },
+  {
+    "name": "Feedback circuit",
+    "detail": "Shared stereo return · bounded self-oscillation",
+    "file": "Feedback-circuit.syn",
+    "category": "Feedback & buses"
+  },
+  {
+    "name": "No-input · two bands",
+    "detail": "Independent returns · drive · cross-coupled delays",
+    "file": "Feedback-two-bands.syn",
+    "category": "Feedback & buses"
+  },
+  {
+    "name": "Feedback · output reverb",
+    "detail": "Outer braces · shared post-chain processing",
+    "file": "Feedback-output-bus.syn",
+    "category": "Feedback & buses"
+  },
+  {
+    "name": "Sound solids",
+    "detail": "Sphere · pyramid · ramp · cube · Perlin noise",
+    "file": "Sound-solids.syn",
+    "category": "Visuals"
+  },
+  {
+    "name": "Mutable timbre",
+    "detail": "Seeded choice per node · ?[s a]",
+    "file": "Mutable-timbre.syn",
+    "category": "Randomness"
+  },
+  {
+    "name": "Random sweeps",
+    "detail": "??>? · random pitch endpoints / pan / gate · chopper",
+    "file": "Random-sweeps.syn",
+    "category": "Randomness"
+  },
+  {
+    "name": "Random time",
+    "detail": "s? pitch · '? duration · new phrase span per loop",
+    "file": "Random-time.syn",
+    "category": "Randomness"
+  },
+  {
+    "name": "Random questions",
+    "detail": "s? pitch · ?165 atom · ?? both",
+    "file": "Random-pitch.syn",
+    "category": "Randomness"
+  },
+  {
+    "name": "Effects in order",
+    "detail": "Reverb then chopper · chopper then reverb",
+    "file": "Effects-chain.syn",
+    "category": "Effects"
+  },
+  {
+    "name": "Common delay",
+    "detail": "d3 seconds · decaying echoes",
+    "file": "Common-delay.syn",
+    "category": "Effects"
+  }
+]

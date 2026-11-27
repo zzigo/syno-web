@@ -1,0 +1,6 @@
+# A234 = 4 generations / mutation 3/9 / spread 0.1 + 4*2.9/9.
+# Change one digit at a time: A234 -> A334 -> A344 -> A345.
+# For exact controls: A N4 U0.3333333333 D1.3888888889.
+uJMA o110
+A234
+s165v0.8e0254'0.32r2

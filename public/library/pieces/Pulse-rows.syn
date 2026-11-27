@@ -1,0 +1,95 @@
+# PULSE ROWS — a small drum-and-bass form, 170 BPM, 48 bars (~68 seconds).
+# One definition = one identifiable instrument. Each drum/bass row spans one 4/4 bar.
+# ~ is a rest cell; 'n16 = sixteenth-note cells; 'n8 = eighth-note cells.
+# Sections below repeat a PARALLEL group, then ; waits for that section to finish.
+# LOOP OFF: hear the complete form once. Alt+Enter auditions a selected row/section.
+# G is a growth generator, not the transport loop. Keep it inside spores' own scope.
+!b170 !sa
+
+# INSTRUMENT ROWS — start with kick alone, then add snare / hats / bass.
+kick=(s[55 ~ ~ ~ ~ ~ 55 ~ ~ ~ 48 ~ ~ ~ ~ ~]v3.8e0094'n16p0)
+snare=(n[~ ~ ~ ~ 1 ~ ~ ~ ~ ~ ~ ~ 1 ~ ~ ~]v1.4e0093'n16f7r1p0.1)
+hats=(n[1 ~ 1 ~ 1 1 1 ~ 1 ~ 1 ~ 1 1 1 ~]v0.35e0001'n16f9p-0.35r1)
+bass=(q[55 ~ 55 82.5 ~ 55 49 ~]v1.1e0252'n8f3>5p-0.1r1)
+
+# A variation: same bar length, different pitches / rhythm / filter opening.
+lowbass=(a[55 55 ~ 49 55 ~ 82.5 55]v1.2e0252'n8f3>6p0.1r1)
+# Quiet burst: <= one bar, once at the start of each shared bar loop.
+spores=(G234@gop(?111v0.45>0.08i2e0254'0.11r2p-0.8>0.8))
+# Breakdown removes BOTH kick and bass; this atmospheric row still lasts one bar.
+air=(t[220 ~ 330 ~ 440 ~ 330 ~]v0.3e1354'n8r5p-0.6>0.6)
+# Build-up: one bar of rolls + a riser lasting sixteen beats / four bars.
+roll=(n[1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]v0.45e0001'n16f6>8r2p0.2)
+riser=(n1v0'b15>0.7'0>0'b1f2>8'b16e0p-0.5>0.5'b16)
+
+# FORM — instrument names stay on individual rows so you can see each layer.
+# 01 INTRO · 4 bars · minimal percussion.
+intro=((
+ kick
+ hats
+)4)
+# 02 GROOVE · 8 bars · full breakbeat and bass establish the pulse.
+groove=((
+ kick
+ snare
+ hats
+ bass
+)8)
+# 03 BREAKDOWN · 4 bars · no kick, no bass.
+breakdown=((
+ air
+)4)
+# 04 BUILD-UP · 4 bars · rolls / hats, with one long rising noise voice.
+build=(
+ (roll hats)4
+ riser
+)
+# 05 DROP · 8 bars · drums and bass return; the biological layer decorates them.
+dropone=((
+ kick
+ snare
+ hats
+ bass
+ spores
+)8)
+# 06 SECOND BREAKDOWN · 4 bars.
+secondbreak=((
+ air
+)4)
+# 07 SECOND BUILD-UP · 4 bars.
+secondbuild=(
+ (roll hats)4
+ riser
+)
+# 08 SECOND DROP · 8 bars · change the bass, retain the shared drum grid.
+droptwo=((
+ kick
+ snare
+ hats
+ lowbass
+ spores
+)8)
+# 09 OUTRO · 4 bars · remove bass and snare, leave mixable percussion.
+outro=((
+ kick
+ hats
+)4)
+
+# PLAY THE FORM — standalone calls supply section names; ; advances by their actual duration.
+intro
+;
+groove
+;
+breakdown
+;
+build
+;
+dropone
+;
+secondbreak
+;
+secondbuild
+;
+droptwo
+;
+outro

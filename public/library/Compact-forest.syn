@@ -1,0 +1,7 @@
+# Three independent compact growths; each expression restores its caller's controls.
+# A234 = N4, U1/3, D1.3889; G442 = N12, U4/9, D0.7444.
+# H532 = N24, U1/3, D0.7444. h lowercase is a chopper.
+clone=(uJMA o110 A234 s165v0.7e0254'0.4r3)
+canopy=(u31 o110 G442 t165v0.5e0254'0.3h0.5r2)
+branches=(uHEX o110 H532 a165v0.25e0254'0.24f5h3r3)
+clone canopy branches

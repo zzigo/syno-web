@@ -1,0 +1,4 @@
+# Default !sc: one oscillator survives all pitch/filter/intensity steps.
+# Different list lengths combine over their least common multiple (12 steps here).
+!b100 !sc
+s[110 165 220 330]f[2 7 4]v[1 2 1.4 2.5]e0'n8

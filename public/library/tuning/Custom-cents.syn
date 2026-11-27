@@ -1,0 +1,4 @@
+# Cents from the root; period defaults to 1200 cents.
+!b90 !sc
+u[0 100 200 500 600] o110
+s[n1 2 3 4 5 4 3 2]f[3 7 5 2]v2e0'n8

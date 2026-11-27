@@ -1,0 +1,6 @@
+# RHYTHM 04 / three notes each 4/3 beat against four quarter notes.
+# They reunite every four beats; no rounded-second drift.
+!b108 !sa
+three=(uJMA o110 s[n1 3 5]v1.2e0254'b4/3p-0.6)
+four=(uJMA o220 t[n1 5 3 5]v0.8e0254'n4p0.6)
+three four

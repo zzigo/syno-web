@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {chooseDefaultModel,DEFAULT_MODEL} from '../src/integrations/default-model';
+const models=[{id:'ollama:gemma:12b',name:'Gemma coder'},{id:'ollama:smollm2:135m',name:'Smollm'},{id:DEFAULT_MODEL,name:'Llama'}];
+test('Llama is selected ahead of a coder regardless of inventory ordering',()=>{assert.equal(chooseDefaultModel(models)?.id,DEFAULT_MODEL);assert.equal(chooseDefaultModel(models,'not-installed')?.id,DEFAULT_MODEL);assert.equal(chooseDefaultModel(models.slice(0,2))?.id,'ollama:smollm2:135m');assert.equal(chooseDefaultModel([]),undefined);});
+test('an explicitly saved installed model overrides the initial Llama default',()=>{assert.equal(chooseDefaultModel(models,'ollama:smollm2:135m')?.id,'ollama:smollm2:135m');});

@@ -1,0 +1,9 @@
+# L&: Directed edits mutates rules; Accumulate preserves them and adds layers.
+# Noise and FM bindings remain musical material, not only pitches.
+# Play starts the agent; bottom AI shows activity even with Agents closed.
+!vl
+L& (
+trunk=s165:s41.25i2v0.5e0254'0.12
+vein=n2v0.15f4h2'0.08
+L3/25 A>A[+B]A B>BB @A=trunk @B=vein
+)

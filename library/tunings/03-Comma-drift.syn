@@ -1,0 +1,5 @@
+# TUNINGS 03 / the same major ratios; the second root is raised by 81/80.
+# 220 * 81/80 = 222.75 Hz. Listen for beating, not a new keyboard step.
+left=(uJMA o220 A N12 U0.03 D0.7 s220v0.7e1354'0.8p-0.6)
+right=(uJMA o222.75 A N12 U0.03 D0.7 s222.75v0.7e1354'0.8p0.6)
+left right

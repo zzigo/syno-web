@@ -1,0 +1,7 @@
+# SINGING / one continuous phrase, independent melodic prosody.
+# The text flows once across the full melody; notes do not imply word boundaries.
+# s / t / a / q select harmonic carrier banks. s is a harmonic sine bank.
+# 'n4 is each melodic cell, so eight cells span four seconds at 120 BPM.
+# Effects follow the vocoder; parentheses still create shared effect buses.
+!b120 !sc uDOR o110
+l[the trees are singing and the forest keeps on growing]:s[n1 3 5 8 7 5 3 1]v4'n4r4p-0.3>0.3

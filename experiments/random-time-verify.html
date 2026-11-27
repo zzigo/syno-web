@@ -1,0 +1,12 @@
+<!doctype html><meta charset="utf-8"><title>Random time · native verification</title>
+<button id="start">Start random-time verification</button><button id="stop">Stop audio</button><pre id="report">s?[110 880]v2e0254'?</pre>
+<script type="module">
+import {AudioEngine} from '/src/audio/engine.ts';import {compile} from '/src/core/parser.ts';import {durationForCycle} from '/src/core/timbre.ts';
+const source="s?[110 880]v2e0254'?",engine=new AudioEngine(),report=document.querySelector('#report'),start=document.querySelector('#start');let frame=0;
+document.querySelector('#stop').onclick=()=>{cancelAnimationFrame(frame);engine.stop();start.disabled=false;};
+start.onclick=async()=>{start.disabled=true;const seen=new Map();let peakLevel=0;await engine.start(compile(source,3181));engine.setVolume(.2);
+function observe(){peakLevel=Math.max(peakLevel,engine.level);for(const event of engine.visualEvents)if(!seen.has(event.id))seen.set(event.id,{t:event.t,dur:event.dur,hz:event.freq.start});
+const cycles=[...seen.values()];report.textContent=JSON.stringify({running:engine.running,cycles,peakLevel},null,2);
+if(cycles.length>=4){engine.stop();const intervals=cycles.slice(1).map((c,i)=>c.t-cycles[i].t),errors=intervals.map((dt,i)=>Math.abs(dt-cycles[i].dur));report.textContent=JSON.stringify({complete:true,cycles,peakLevel,noPadding:errors.every(e=>e<.005),deterministic:cycles.every((c,i)=>c.dur===durationForCycle([.1,2],3181,0,i)),distinctDurations:new Set(cycles.map(c=>c.dur)).size,errors},null,2);start.disabled=false;return;}frame=requestAnimationFrame(observe);}observe();};
+window.addEventListener('pagehide',()=>engine.stop());
+</script>

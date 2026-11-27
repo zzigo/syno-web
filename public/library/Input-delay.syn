@@ -1,0 +1,6 @@
+# Press Play to authorize microphone input. No input permission is requested on load.
+# i means i1, the first channel of the selected browser input device.
+# !i1 is input trim on a 0..1 scale; v keeps the normal 0..9 sound level.
+# Stop releases the microphone. id0.3 = channel 1 + delay 0.3 seconds.
+!i1=(0.9)
+id0.3v3e0'30

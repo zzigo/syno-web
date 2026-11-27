@@ -1,0 +1,8 @@
+# FEEDBACK CIRCUIT
+# A tiny 20 ms seed; no microphone and no continuous excitation.
+# d = delay seconds, g = return gain, x = cross-routing 0..1.
+# f = lowpass 0..9, v = output level, final '16 = circuit lifetime.
+# Try g0.85 for decay, g1.12 for growth toward bounded saturation.
+# Keep output v independent from g. Cmd+. disconnects the circuit.
+!vc
+{ n1v0.03'0.02e0 }d0.012g1.12f6.6x0.35v2'16

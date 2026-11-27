@@ -1,0 +1,5 @@
+# TUNINGS 01 / change only the u line, then Play.
+# TRY uJMA / uPTH / uMIN / u31. o110 is the reference root in Hz.
+uJMA o110
+G N12 U0.04 D0.8
+s165v0.8e0254'0.28r2

@@ -1,0 +1,11 @@
+# PLAY — leave the cursor at this score and Cmd/Ctrl+E.
+# Q/A: N digit; W/S: U digit; E/D: D digit; R/F: Hz;
+# T/G and Y/H: volume endpoints; U/J: FM index;
+# I/K, O/L, P/; and [/apostrophe: ADSR stages.
+# Hold Shift for a finer decimal step (discrete digits remain whole).
+# U L = next loop; U W = live writing; PLAY also performs hot edits with manual U.
+# Cmd/Ctrl+E again restores ordinary typing. E in the bottom bar does the same.
+G588@gop ?111v3>1i2e0254'0.11r4p-1>1
+# Comma shortens / period lengthens the first written time from the anchor.
+# Numeric times use seconds and their decimal calibre; n figures halve/double duration.
+# To control reverb and pan, leave PLAY, place the cursor there, enter again.

@@ -1,0 +1,5 @@
+# VOICE / Kokoro af_heart / local English prototype.
+# First Play downloads the local model (~95 MB); the worker renders before transport starts.
+# The whole phrase is fitted to its gate. No text is transmitted; Stop cancels preparation.
+# Omit '4 for a deterministic duration estimated from the word count.
+l[this is a verse of my first song]v4'4r2

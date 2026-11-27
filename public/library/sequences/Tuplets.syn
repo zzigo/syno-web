@@ -1,0 +1,3 @@
+# Four outer quarter-note cells. The second contains an eighth-note triplet.
+!b120 !sa
+s[110 [165 220 330] 440 220]v2e0254'n4

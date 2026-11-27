@@ -1,0 +1,5 @@
+# TUNINGS 10 / tuning changes oscillator pitches; it does not pitch-quantize noise.
+# The noise growth uses X filter / Y chopper / Z intensity instead.
+notes=(uWCA o55 G N20 U0.06 D0.9 s110:t27.5i0.2>5'0.4v0.6e0254'0.4r3)
+grains=(K N20 U0.1 D0.9 @fhv/bfs n2v0.45e0254'0.3r2)
+notes grains

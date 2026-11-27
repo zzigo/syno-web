@@ -1,0 +1,8 @@
+# Keep parameter XYZ mapping @fov independent of speaker placement.
+# SP in footer overlays speakers on the normal FOLD; !vs shows the room alone.
+!t[Forest beside the room]
+!spk[000 900 909 009 090 990 999 099]
+!vc
+G234@fov (s165v0.8e0254'0.35p[o1>8])
+H232@fov (t220v0.5e0254'0.5p[x -1>1 0 -1])
+S223@fov (n2v0.1e0254'0.3f6p[o3])

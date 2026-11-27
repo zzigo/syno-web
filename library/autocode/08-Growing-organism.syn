@@ -1,0 +1,11 @@
+# ACCUMULATE: Play starts the agent automatically. No enable switch.
+# Agents -> Accumulate (default): Llama writes new layers, not a mutation index.
+# Earlier notes, timbres, effects, IDs and the 1.2-second loop are preserved.
+# Quiet new expressions appear in the editor and enter at the next loop.
+# Close Agents: growth continues. Pause / Stop / Undo explicitly control it.
+# Maximum 12 sound expressions by default; change the limit in Agents.
+!b100 !sa
+G234& (
+s[165 220 247.5 330]v0.5e0254'n8p-0.4
+0.3t82.5:s20.625i1.5v0.2e0254'0.9p0.4
+)

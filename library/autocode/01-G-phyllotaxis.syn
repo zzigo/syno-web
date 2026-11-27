@@ -1,0 +1,11 @@
+# Phyllotaxis · two interlaced tuned cells
+# G234& : geometry N4 U0.3333 D1.3889; no static population expansion.
+# Play starts agentic growth; open Agents to choose model or behavior.
+# Only the parenthesized music is rewritten. Bottom AI shows input/output tokens.
+# Pause / Undo mutation in Agents; Cmd+. stops sound and blocks further adoption.
+!b100 !sa
+G234& (
+uJMA o110
+s[n1 3 5 3]v0.8e0254'n8p-0.5
+t[n1 2 4 5]v0.5e0254'n8p0.5r2
+)

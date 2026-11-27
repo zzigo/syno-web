@@ -1,0 +1,12 @@
+# TUNINGS 13 / six expressions, three growth populations and three cell voices.
+# Growth order supplies another rhythm; it does not consume the sequence grid.
+# Cells repeat through the longer canopy arc instead of ending after 2.4 s.
+# h gates are independent per voice. Replace any local u with a Scale desk option.
+!b100 !sa
+canopy=(u31 o110 G N16 U0.06 D0.8 s165:t27.5i0.2>5'0.32v0.6e0254'0.32r3)
+veins=(uHEX o165 H N16 U0.08 D0.9 @pov/dfs t220v0.5e0254'0.28r2)
+roots=(uBPJ o55 K N16 U0.1 D0.9 q82.5v0.3e0254'0.4f4h2r3)
+bass=(uJMI o55 s[n1 ~ 5 3 ~ 1 5 ~]v0.8e0254'n8p-0.65r2)
+shards=(uHEX o220 a[n1 [2 4 6] ~ 5]v0.25e0254'n4f3>7'2.4p0.65r3)
+dust=(n2v[0.2 0 0.1 0]f[3 6 4]h0.2>3'2.88e0'n16)
+canopy veins roots (bass)5 (shards)5 (dust)7

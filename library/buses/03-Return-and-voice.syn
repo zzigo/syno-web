@@ -1,0 +1,8 @@
+# RETURN AND VOICE / a real return plus a generated spoken modulator / shared output chain.
+# First use downloads local Kokoro. English voice; text stays local.
+# The g branch is feedback. Outer f is a post-return filter, not the feedback filter.
+# Literal pitch Hz here. Four one-second carrier cells make a four-second verse.
+{
+ {{n2v0.025'0.03e0}g1.08d0.013f5v1.2'4}p-0.5f6>2
+ {l[the circuit remembers every word]:a[110 165 220 147]v3'1}p0.5d0.25r3
+}f8>4r4p-0.3>0.3v6

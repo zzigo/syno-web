@@ -1,0 +1,7 @@
+# CINEMA / l_ adds synchronized yellow subtitles; l keeps the voice without subtitles.
+# One full verse cue per sounding phrase. No inferred word or phoneme alignment.
+# w0 = raw voice; w9 = vocoder; w2>8 traverses the complete verse.
+!b100 !sc
+l_[The future enters through a door made of light.]:a[110 165 220 165 147 196 165 110]w2>8v4'n2r3
+;
+l_[And leaves a little music in the walls.]:s[220 196 165 147 165 147 123.5 110]w7>1v4'n2r4

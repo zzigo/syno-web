@@ -1,0 +1,3 @@
+# Every step is a separate voice with its own ADSR.
+!b120 !sa
+s[110 165 220 330]v2e0254'n8

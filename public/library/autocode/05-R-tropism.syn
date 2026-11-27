@@ -1,0 +1,9 @@
+# Tropism · two long opposing trajectories
+# R254& : geometry N4 U0.5556 D1.3889; no static population expansion.
+# Play starts agentic growth; open Agents to choose model or behavior.
+# Only the parenthesized music is rewritten. Bottom AI shows input/output tokens.
+# Pause / Undo mutation in Agents; Cmd+. stops sound and blocks further adoption.
+R254& (
+s110>220'8v0>0.6>0'8p-1>1'8f2>7'8e0r3
+t330>165'8v0>0.3>0'8p1>-1'8f7>3'8e0r2
+)

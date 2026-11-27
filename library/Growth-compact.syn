@@ -1,0 +1,8 @@
+# Compact N/U/D controls coexist with exact and original spellings.
+# A342 = A N8 U0.444444 D0.744444 (N lookup / U digit divided by 9 / D 0.1..3).
+# Precise equivalent construction: A(8,0.444444,0.744444).
+!vc
+uJMA o110
+canopy=(A342 @pov/dfs s110v2e0254'0.22)
+roots=(K(14,0.08,1.2) @fhi/bfs n2v0.25e0254'0.28)
+canopy roots

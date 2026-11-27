@@ -1,0 +1,10 @@
+# SHEPARD DESCENT
+# Six octave-spaced sine layers, renewed every 20/6 seconds.
+# ^ = exponential frequency glide; > = linear values.
+# 13 intensity values approximate a raised-cosine window over 20 seconds.
+# LOOP on: starts with preceding voices already in flight, then continues.
+# LOOP off before Play: auditions one isolated 20-second voice.
+!vf
+(
+ s3520^55'20v0>0.201>0.75>1.5>2.25>2.799>3>2.799>2.25>1.5>0.75>0.201>0'20p-0.6>0.6'20e0
+)'3.3333333333333335

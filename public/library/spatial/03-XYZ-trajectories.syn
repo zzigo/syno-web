@@ -1,0 +1,9 @@
+# XYZ mode uses DBAP. Compare with 02: this interpolates a physical position.
+# Packed p[423>111] = three digits per XYZ endpoint, 0..9 -> -1..1.
+# Exact centre: p[x 0 0 0]. p[-1 0 1] still means a sequential pan.
+!t[Three trajectories]
+!spk[000 900 909 009]
+!vs
+s220v0>1>0'10e0p[423>111]
+t330v0>0.6>0'10e0p[x -1 0 -1]>[x 1 0 1]
+a440v0>0.3>0'10e0f3>8p[x 0 -1>1 0]

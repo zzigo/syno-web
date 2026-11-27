@@ -1,0 +1,5 @@
+# TUNINGS 11 / edit cents with Alt+arrows. Values are not limited to 0..9.
+# TRY u[0 100 270 540 670 785 950] or u[0 90 386 702 996].
+left=(u[0 100 270 540 670 785 950] o110 A N16 U0.08 D1 @pov/dfs s165v0.7e0254'0.3p-0.5r2)
+right=(u[0 90 386 702 996] o110 S N16 U0.08 D1 @pov/nnb a165v0.3e0254'0.3f5p0.5r3)
+left right

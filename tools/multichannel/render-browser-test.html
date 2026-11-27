@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8"><title>syNo spatial render verification</title></head><body><button id="run">Run render verification</button><pre id="result">Ready</pre><div id="downloads"></div><script type="module">
+import {createOutputBus} from '/src/audio/output-bus.ts';
+import {withAutomationSmoothing} from '/src/audio/automation.ts';
+import {AudioEngine} from '/src/audio/engine.ts';
+import {compile} from '/src/core/parser.ts';
+import {encodeWav,encodeCompressed} from '/src/audio/render-file.ts';
+const result=document.querySelector('#result'),downloads=document.querySelector('#downloads');
+const assert=(value,message)=>{if(!value)throw Error(message);};
+const layout='!spk[000 900 909 009]';
+const energy=data=>Math.sqrt(data.reduce((s,x)=>s+x*x,0)/data.length);
+const link=(blob,name)=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.textContent=name;a.style.display='block';downloads.append(a);};
+document.querySelector('#run').onclick=async()=>{
+ try {
+  result.textContent='Rendering…';downloads.replaceChildren();const report={};
+  const silent=await new AudioEngine().render(compile("(s220v1e0'0.2 t330v1e0'0.2)~"),false,1);report.probabilityRest=energy(silent.buffer.getChannelData(0));assert(report.probabilityRest===0,'A definite group rest leaked audio');
+  const capsules=await new AudioEngine().render(compile("A434(s165:s41.25i2v0.4e0'0.15 0.16n2v0.1e0f6'0.2)"),false,1);report.apomixis=energy(capsules.buffer.getChannelData(0));assert(report.apomixis>0.0001,'Capsule motif is silent');
+  const source=`${layout} s220v1e0'1p[o1>2]`;
+  const {buffer}=await new AudioEngine().render(compile(source),true,1);
+  const channels=Array.from({length:buffer.numberOfChannels},(_,i)=>new Float32Array(buffer.getChannelData(i)));
+  report.raw=channels.map(energy);assert(buffer.numberOfChannels===4,'Expected 4 channels');assert(report.raw[0]>.001&&report.raw[1]>.001,'Crossfade output missing');assert(report.raw[2]===0&&report.raw[3]===0,'Raw sends leaked to unrelated outputs');
+  assert(energy(channels[0].slice(0,12000))>energy(channels[1].slice(0,12000)),'Crossfade starts on wrong output');assert(energy(channels[1].slice(36000,47000))>energy(channels[0].slice(36000,47000)),'Crossfade ends on wrong output');link(encodeWav(channels,buffer.sampleRate),'spatial-raw-4ch.wav');
+  result.textContent='Raw routing PASS; testing bus effects…';
+  const bus=await new AudioEngine().render(compile(`${layout} {s220v1e0'0.3p[o4]}r2h2f5d0.05`),true,1);
+  report.bus=Array.from({length:4},(_,i)=>energy(bus.buffer.getChannelData(i)));assert(report.bus[3]>.0001,'Bus lost output 4');assert(report.bus.slice(0,3).every(x=>x===0),'N effects leaked channels');
+  const ctx=new OfflineAudioContext(4,48000,48000),first=compile(`${layout} {s220e0'1}p[o1]`),next=compile(`${layout} {s220e0'1}p[o2]`);
+  const hot=createOutputBus(ctx,first.outputBuses[0],0,ctx.destination,()=>ctx.createBuffer(1,10,48000),first.speakers),osc=ctx.createOscillator(),quiet=ctx.createGain();quiet.gain.value=.01;osc.connect(quiet).connect(hot.input);osc.start(0);osc.stop(1);assert(withAutomationSmoothing(.05,()=>hot.update(next.outputBuses[0],.5)),'Bus rejected a compatible hot edit');
+  const changed=await ctx.startRendering();report.hotBus=[energy(changed.getChannelData(0).slice(0,19000)),energy(changed.getChannelData(1).slice(32000,47000))];assert(report.hotBus.every(x=>x>.001),'Hot bus route not audible');assert(energy(changed.getChannelData(0).slice(32000,47000))<1e-8,'Old bus output not released');hot.dispose();
+  const rawPathScore=compile("!r[20 10 30] !spk[123 323 432 432] s100v1e0'1.2p[o1>4>3>2]");const rawPath=await new AudioEngine().render(rawPathScore,true,1);report.rawPath=Array.from({length:4},(_,i)=>energy(rawPath.buffer.getChannelData(i)));assert(report.rawPath.every(x=>x>.001),'Raw path missed a discrete destination');
+  const heightScore=compile("!room[20 8 30] spk7.1.4 s220v1e0'0.3p[x -1 0 -1]>[x 1 1 1]");const height=await new AudioEngine().render(heightScore,true,1);report.height=Array.from({length:12},(_,i)=>energy(height.buffer.getChannelData(i)));assert(report.height.length===12&&report.height[3]===0,'Height layout/LFE routing mismatch');assert(report.height.filter((_,i)=>i!==3).every(x=>x>0),'Missing full-range height output');link(encodeWav(Array.from({length:12},(_,i)=>height.buffer.getChannelData(i)),48000,heightScore.speakerLayout.channelMask),'room-7.1.4.wav');
+  const rawLFE=await new AudioEngine().render(compile("spk5.1 s2000v1e0'0.2p[o4]"),true,1);report.rawLFE=Array.from({length:6},(_,i)=>energy(rawLFE.buffer.getChannelData(i)));assert(report.rawLFE[3]>.001&&report.rawLFE.filter((_,i)=>i!==3).every(x=>x===0),'Raw LFE was filtered or leaked');
+  const xyz=await new AudioEngine().render(compile(`${layout} s220v1e0'1p[000>999]`),true,1);report.xyz=Array.from({length:4},(_,i)=>energy(xyz.buffer.getChannelData(i)));assert(report.xyz.every(x=>x>.0001),'XYZ did not distribute to speakers');
+  const fx=await new AudioEngine().render(compile(`${layout} {{n2v0.1'0.1e0}d0.017g1.05f5v1'0.6}h1r2p[o1>4]`),true,1);report.feedback=Array.from({length:4},(_,i)=>energy(fx.buffer.getChannelData(i)));assert(report.feedback[0]>0&&report.feedback[3]>0,'Feedback output absent');assert(report.feedback[1]===0&&report.feedback[2]===0,'Feedback output leaked');
+  const many=await new AudioEngine().render(compile("((s220v0.1e0'0.01 ;0.001)100)3"),false,1);report.longScore=energy(many.buffer.getChannelData(0).slice(3*48000,3.2*48000));assert(report.longScore>.00001,'Offline render dropped later voices');
+  const st=await new AudioEngine().render(compile(source),false,1);report.stereo=Array.from({length:2},(_,i)=>energy(st.buffer.getChannelData(i)));assert(report.stereo.every(x=>x>.001),'Stereo monitor is silent');
+  for(const format of ['ogg','mp3']){result.textContent=`Encoding ${format}…`;const pcm=Array.from({length:2},(_,i)=>new Float32Array(st.buffer.getChannelData(i)));const blob=await encodeCompressed(pcm,48000,format,new AbortController().signal);assert(blob.size>1000,`${format} empty`);report[format]={bytes:blob.size,type:blob.type};link(blob,`spatial-monitor.${format}`);}
+  result.textContent=JSON.stringify({pass:true,...report},null,2);
+ }catch(error){result.textContent=JSON.stringify({pass:false,error:String(error),stack:error.stack},null,2);}
+};
+</script></body></html>

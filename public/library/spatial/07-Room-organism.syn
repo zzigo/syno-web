@@ -1,0 +1,11 @@
+# FOLD and the room share a physical volume; green growth, cyan sound, amber speakers.
+# X width / Y height / Z depth, in metres, centered at the room origin.
+# Without an explicit p, growth occupies the room in XYZ. @ still routes sound parameters.
+# !vp = parameter cube. !vs = room + organism + trajectories. !vd is reserved.
+!t[Biome in a room]
+!room[20 8 30]
+spkOCT
+!vs
+G234@fov (s165v1e0254'0.5)
+H232@fov (t220v0.7e0254'0.7)
+S223@fov (n2v0.15e0254'0.4f5)

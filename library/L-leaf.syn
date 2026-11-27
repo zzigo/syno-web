@@ -1,0 +1,14 @@
+# L · LEAF / bilateral venation / seed 3181
+# F lengthens a vein; X is a growing tip, bound here to a different timbre.
+# An unbound X is a silent nonterminal in bracketed grammars.
+# The spine and paired veins fork in space AND time; /55 sets the turn angle.
+!vl
+vein=(
+ n3v0>0.35>0'0.65f1.8>4'0.65e0r3'0.65
+ t82.5:s27.5i0.4>3'0.65v0>0.4>0'0.65e0r3'0.65
+)
+tip=(
+ n1v0>0.12>0'0.9f7>3'0.9h0.1>1'0.9e0r4'0.9
+ a330:s110i1>7'0.9v0>0.22>0'0.9e0r4'0.9
+)
+L3:X/55 X>F[+X][-X]FX F>FF @F=vein @X=tip

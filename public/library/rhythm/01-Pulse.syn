@@ -1,0 +1,4 @@
+# RHYTHM 01 / all four cells have the same pitch and one eighth-note gate.
+# Change !b120, then try n4 / n8 / n16 after the apostrophe.
+!b120 !sa
+s[220 220 220 220]v1.5e0254'n8

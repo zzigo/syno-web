@@ -1,0 +1,11 @@
+# PIECES / keep Loop ON: the future rotator evolves on successive transport cycles.
+# Two copies of the pictured twelve-note cell, the second rotated one slot.
+# One-based Dorian positions; tonic is E4 (MIDI 64). Synthetic timbre, no piano sample.
+# !f6:48 = every six seconds, rotate reichp right one slot; at most 48 actions.
+# Mutations become audible at the next phrase boundary; source stays declarative.
+!b180 !sx
+uDOR o329.6275569
+reich=(t[n1 2 5 6 7 2 1 6 5 2 7 6]:s82.4i0.2v2e0092'n8p-0.6)
+reichp=(t[n6 1 2 5 6 7 2 1 6 5 2 7]:s82.4i0.2v2e0092'n8p0.6)
+!f6:48 reichp 1
+reich reichp

@@ -1,0 +1,10 @@
+# Discrete outputs, no spatial algorithm. 1 -> 2 -> 3 -> 4.
+# !spk rows: speaker ID, X right, Y up, Z depth, metres.
+# p[o1] addresses speaker ID 1. File channels follow !spk row order.
+!t[Four objects]
+!spk[[1 -1 0 -1] [2 1 0 -1] [3 1 0 1] [4 -1 0 1]]
+!vs
+s220v0>1>0'1e0p[o1]
+1s275v0>1>0'1e0p[o2]
+2s330v0>1>0'1e0p[o3]
+3s440v0>1>0'1e0p[o4]

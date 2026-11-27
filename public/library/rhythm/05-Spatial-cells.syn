@@ -1,0 +1,6 @@
+# RHYTHM 05 / !sx: one separator is normal; each EXTRA space is a rest.
+# Add one space before 330 and watch/listen to its shifted onset.
+!b120 !sx
+upper=(s[220  330 440   330]v1.2e0254'n8p-0.6)
+lower=(t[110 165  220  165]v0.8e0254'n8p0.6)
+upper lower

@@ -1,0 +1,8 @@
+# RANDOM QUESTIONS
+# ?165 = random oscillator, fixed pitch; s? = sine, random pitch.
+# ?? = random oscillator and random pitch; renewed each score loop.
+# Frequency choices are log-uniform, 55..1760 Hz unless bounded.
+!vc
+s?[110:880]v2e0254'0.4
+0.5?[s a]?[220:660]v2e0254'0.4
+1??v2e0254'0.4
