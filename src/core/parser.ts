@@ -9,7 +9,7 @@ import {sequenceLeaves,stepped,compactGrowth,traverseNodes,type Sequence,type Ce
 import {turtleGeometry} from './lsystem-turtle';
 import {durationForCycle,frequencyForCycle,panForCycle,frequencyRampForCycle,timbreForCycle} from './timbre';
 import {echoTail,reverbSeconds,MIN_DELAY_SECONDS,MAX_DELAY_SECONDS} from '../audio/effects';
-import {intensityContour,MAX_TIME_SECONDS} from './curves';
+import {intensityContour,parameterContour,fitRampDuration,rampPeak,MAX_TIME_SECONDS} from './curves';
 import {deriveLSystem,type RewriteRule} from './lsystem';
 import type { VisualMode } from './visualization';
 import { createGenerator } from '../vendor/fold-generators.js';
@@ -17,7 +17,7 @@ import type { CompiledScore, Diagnostic, BusEffect, FeedbackCircuit, NoteEvent, 
 
 type Argument=number|{parameter:number};
 type Value=Argument|{choices:number[]};
-interface Setting {followGate?:boolean;random?:([number,number]|undefined)[]; value: Value; end?: Value; duration?: number; exponential?:boolean; contour?:{values:Value[];times:(number|undefined)[]};sequence?:Sequence }
+interface Setting {followGate?:boolean;random?:([number,number]|undefined)[]; value: Value; end?: Value; duration?: number; exponential?:boolean; contour?:{values:Value[];times:(number|undefined)[];control?:boolean;reverse?:boolean;ranges?:([number,number]|undefined)[];logarithmic?:boolean;bounds?:[number,number]};sequence?:Sequence }
 interface SpatialSetting {mode:'xyz'|'outputs';values:Setting[];route?:number[]}
 type Ast = Range & (
   | {kind:'shift';nodes:Ast[];offset:number}
@@ -27,7 +27,7 @@ type Ast = Range & (
   | {kind:'speakers';speakers:Speaker[];compact?:boolean}
   | {kind:'section';wait:number;name?:string}
   | {kind:'title';text:string}
-  | { kind: 'sound'; spatial?:SpatialSetting; lyrics?:NoteEvent['lyrics'];wet?:Setting;durationValue?:Argument;durationChoices?:number[]; wave: Wave;waveOptions?:Wave[];freqRange?:[number,number];freqEndRange?:[number,number];freqRandomSweep?:boolean;freqSweepFollowsGate?:boolean;durationRange?:[number,number];durationEnd?:number;gateExplicit?:boolean; freq: Setting; modulation?: Setting; modulatorWave?: Exclude<Wave,'n'|'i'>; index: Setting; volume: Setting; pan: Setting;panRandom?:import('./types').PanRandom; panExplicit:boolean; duration: number; envelope: string; reverb: Setting;delay?:Setting; filter?: Setting; chop?: Setting; offset: number }
+  | { kind: 'sound'; spatial?:SpatialSetting; lyrics?:NoteEvent['lyrics'];wet?:Setting;durationValue?:Argument;durationChoices?:number[]; wave: Wave;waveOptions?:Wave[];freqRange?:[number,number];freqEndRange?:[number,number];freqRandomSweep?:boolean;freqSweepFollowsGate?:boolean;durationRange?:[number,number];durationEnd?:number;durationPath?:number[];gateExplicit?:boolean; freq: Setting; modulation?: Setting; modulatorWave?: Exclude<Wave,'n'|'i'>; index: Setting; volume: Setting; pan: Setting;panRandom?:import('./types').PanRandom; panExplicit:boolean; duration: number; envelope: string; reverb: Setting;delay?:Setting; filter?: Setting; chop?: Setting; offset: number }
   | { kind:'lsystem'; iterations:number; axiom?:string; angle?:number;taper?:number; headerTo:number; rules:(RewriteRule&Range)[]; bindings:({symbol:string;name:string;args:number[]}&Range)[] }
   | {kind:'config';bpm?:number;mode?:SequenceMode;tuning?:Tuning;root?:Argument;map?:string;walk?:string;input?:{channel:number;gain:number};future?:{name:string;every:number;count:number;shift:number}}
   | { kind: 'view'; mode: VisualMode }
@@ -100,13 +100,19 @@ class Reader {
       if (this.peek() === '*') return this.parameterValue();
       return this.number(false) ?? fallback;
     };
-    const result: Setting = { value: read() };
-    if (this.peek() === '>' || this.peek() === '<' || this.peek() === '^') {
-      const direction = this.peek(); this.p++; result.end = read();if(direction==='^')result.exponential=true;
-      if (direction === '<') [result.value, result.end] = [result.end, result.value];
-      result.duration = 2;result.followGate=true;
-      if (this.peek() === "'" && this.text[this.p+1]!=='?') { this.p++; result.duration = this.time();result.followGate=false; }
-      if (!(result.duration! > 0 && result.duration! <= MAX_TIME_SECONDS)) this.error('Sweep time must be positive and at most 86400 seconds.');
+    const values=[read()],times:(number|undefined)[]=[undefined],directions:string[]=[];
+    while('><^'.includes(this.peek())&&this.peek()){
+      if(values.length>=16)this.error('Control contours support at most 16 values.');
+      directions.push(this.peek());this.p++;values.push(read());
+      let time:number|undefined;if(this.peek()==="'"&&this.text[this.p+1]!=='?'){this.p++;time=this.time();if(!(time>0&&time<=MAX_TIME_SECONDS))this.error('Sweep time must be positive and at most 86400 seconds.');}times.push(time);
+    }
+    const result:Setting={value:values[0]};
+    if(values.length===2){const direction=directions[0];result.end=values[1];result.duration=times[1]??2;result.followGate=times[1]===undefined;if(direction==='^')result.exponential=true;if(direction==='<'){[result.value,result.end]=[result.end,result.value];random.reverse();}}
+    else if(values.length>2){
+      if(new Set(directions).size>1)this.error('Use one direction throughout a control path: >, < or ^.');
+      const reverse=directions[0]==='<',exponential=directions[0]==='^';let duration:number;
+      try{duration=parameterContour(values.map(()=>1),times,reverse,exponential).duration;}catch(error){this.error(error instanceof Error?error.message:String(error));}
+      result.end=values.at(-1);result.duration=duration!;result.followGate=times.every(t=>t===undefined);result.contour={values,times,control:true,reverse,bounds};if(exponential)result.exponential=true;
     }
     if(random.some(Boolean))result.random=random;return result;
   }
@@ -176,13 +182,13 @@ class Reader {
           if(op==='r'||op==='h')add(op==='r'?'reverb':'chop',this.value(1));
           else if(op==='p'){if(/^\[\s*(?:(?:xyz|x|o)(?:[\s,])|o\d|\d{3}(?:[><]|\]))/.test(this.text.slice(this.p)))effects.push({kind:'pan',value:0,spatialSetting:this.spatialValue()});else add('pan',this.value(0,undefined,[-1,1]));}
           else if(op==='d'){circuit.delay=this.value(.3,undefined,[MIN_DELAY_SECONDS,MAX_DELAY_SECONDS]);add('delay',circuit.delay);if(this.peek()===','){requiresReturn=true;this.p++;circuit.delayRight=this.value(.029,undefined,[MIN_DELAY_SECONDS,MAX_DELAY_SECONDS]);}}
-          else if(op==='g'){hasReturn=true;circuit.gain=this.value(.85);if(this.peek()===','){this.p++;circuit.gainRight=this.value(.68);}}
-          else if(op==='b'){requiresReturn=true;const left=this.value(220);let right=left;if(this.peek()===','){this.p++;right=this.value(880);}circuit.band=[left,right];}
-          else if(op==='q'){requiresReturn=true;const left=this.value(.25);let right=left;if(this.peek()===','){this.p++;right=this.value(.2);}circuit.rq=[left,right];}
-          else if(op==='k'){requiresReturn=true;circuit.drive=this.value(2.5);}
+          else if(op==='g'){hasReturn=true;circuit.gain=this.value(.85,undefined,[0,1.5]);if(this.peek()===','){this.p++;circuit.gainRight=this.value(.68,undefined,[0,1.5]);}}
+          else if(op==='b'){requiresReturn=true;const left=this.value(220,undefined,[40,8000]);let right=left;if(this.peek()===','){this.p++;right=this.value(880,undefined,[40,8000]);}circuit.band=[left,right];}
+          else if(op==='q'){requiresReturn=true;const left=this.value(.25,undefined,[.01,1]);let right=left;if(this.peek()===','){this.p++;right=this.value(.2,undefined,[.01,1]);}circuit.rq=[left,right];}
+          else if(op==='k'){requiresReturn=true;circuit.drive=this.value(2.5,undefined,[0,10]);}
           else if(op==='f'){circuit.filter=this.value(6.6);circuit.filterExplicit=true;add('filter',circuit.filter);}
           else if(op==='v'){const v=this.intensity();circuit.volume=v.setting;if(v.gate!==undefined)circuit.duration=v.gate;add('volume',v.setting);}
-          else if(op==='x'){requiresReturn=true;circuit.crossSetting=this.value(.35);}else if(op==="'")circuit.duration=this.time();else this.error(`Unknown bus/circuit control '${op}'. Use v/p/f/h/d/r; g explicitly enables feedback.`);
+          else if(op==='x'){requiresReturn=true;circuit.crossSetting=this.value(.35,undefined,[0,1]);}else if(op==="'")circuit.duration=this.time();else this.error(`Unknown bus/circuit control '${op}'. Use v/p/f/h/d/r; g explicitly enables feedback.`);
         }
         circuit.to=this.p;
         if(requiresReturn&&!hasReturn)this.error('Feedback controls b/q/k/x and paired delays require an explicit return g.');
@@ -260,6 +266,8 @@ class Reader {
     this.p++;while(/\s/.test(this.peek())&&this.peek())this.p++;
     const direct=this.text.slice(this.p).match(/^o(\d+(?:[><]\d+)*)\]/);
     if(direct){this.p+=direct[0].length;const directions:string[]=direct[1].match(/[><]/g)??[];if(directions.includes('>')&&directions.includes('<'))this.error('Use one direction in a raw path; reverse the order for <.');const route=direct[1].split(/[><]/).map(Number);if(route.length>32)this.error('At most 32 steps in a raw output path.');if(directions[0]==='<')route.reverse();return {mode:'outputs',values:[],route};}
+    const path=this.text.slice(this.p).match(/^\d{3}(?:[><]\d{3}){2,}/)?.[0];
+    if(path){const directions=path.match(/[><]/g)!,steps=path.split(/[><]/);if(new Set(directions).size>1)this.error('Use one direction throughout an XYZ path.');if(steps.length>16)this.error('XYZ contours support at most 16 waypoints.');this.p+=path.length;if(this.peek()!==']')this.error('Close the XYZ path with ].');this.p++;const duration=(steps.length-1)*2;return {mode:'xyz',values:[0,1,2].map(axis=>{const values=steps.map(step=>Number(step[axis])/4.5-1);return {value:values[0],end:values.at(-1),duration,followGate:true,contour:{values,times:values.map(()=>undefined),control:true,reverse:directions[0]==='<',bounds:[-1,1]}};})};}
     const packed=this.text.slice(this.p).match(/^(\d{3})(?:([><])(\d{3}))?/);
     if(packed){this.p+=packed[0].length;const values:Setting[]=[...packed[1]].map((digit,i)=>({value:Number(digit)/4.5-1,...(packed[3]?{end:Number(packed[3][i])/4.5-1,duration:2,followGate:true}:{})}));if(packed[2]==='<')values.forEach(v=>{[v.value,v.end]=[v.end!,v.value];});if(this.peek()!==']')this.error('Packed XYZ is p[423] or p[423>111].');this.p++;return {mode:'xyz',values};}
     const marker=this.text.slice(this.p).match(/^(xyz|x|o)/)![0];this.p+=marker.length;
@@ -283,6 +291,7 @@ class Reader {
   }
   panValue(){
     if(this.peek()==='[')return {setting:{value:0,sequence:this.sequence()} as Setting,random:undefined};
+    const saved=this.p,parameter=this.parameter,candidate=this.value(0,undefined,[-1,1]);if(candidate.contour)return {setting:candidate,random:undefined};this.p=saved;this.parameter=parameter;
     const ranges:([number,number]|undefined)[]=[];
     const read=():Value=>{if(this.peek()==='?'){const spec=this.randomSpec([-1,1]);if('choices'in spec){ranges.push(undefined);return {choices:spec.choices};}ranges.push(spec.range);return 0;}ranges.push(undefined);if(this.peek()==='*')return this.parameterValue();return this.number(false)??0;};
     const setting:Setting={value:read()};let sweep=false,explicitTime=false;
@@ -368,9 +377,10 @@ class Reader {
     const freq=this.value(wave==='n'||wave==='i'?1:440,part=>{
       if(wave==='n'||wave==='i')this.error('Random Hz frequency requires a tonal oscillator.');
       const spec=this.randomSpec([55,1760],[20,20000]);if('choices'in spec){ranges[part]=undefined;return {choices:spec.choices};}ranges[part]=spec.range;return 440;
-    });
-    const frequencyText=this.text.slice(frequencyFrom,this.p);if(frequencyText.includes('<')){const first=ranges[0];ranges[0]=ranges[1];ranges[1]=first;}
-    const freqRange=ranges[0],freqEndRange=ranges[1],freqRandomSweep=(!!freqRange||!!freqEndRange)&&freq.end!==undefined,freqSweepFollowsGate=freqRandomSweep&&!frequencyText.includes("'");
+    },wave==='n'?[1,3]:wave==='i'?[1,8]:[20,20000]);
+    if(freq.contour&&ranges.some(Boolean)){freq.contour.ranges=ranges;freq.contour.logarithmic=true;}
+    const frequencyText=this.text.slice(frequencyFrom,this.p);if(!freq.contour&&frequencyText.includes('<')){const first=ranges[0];ranges[0]=ranges[1];ranges[1]=first;}
+    const freqRange=freq.contour?undefined:ranges[0],freqEndRange=freq.contour?undefined:ranges[1],freqRandomSweep=(!!freqRange||!!freqEndRange)&&freq.end!==undefined,freqSweepFollowsGate=freqRandomSweep&&!frequencyText.includes("'");
     let explicitDuration=false;
     const result: Ast & {kind:'sound'} = { kind: 'sound', lyrics,wave,waveOptions,freqRange,freqEndRange,freqRandomSweep,freqSweepFollowsGate, freq, from, to: this.p, offset,
       index: { value: 1 }, volume: { value: wave==='i'?9:3 }, pan: { value: 0 }, panExplicit:false, duration: freq.duration ?? (lyrics?lyricDuration(lyrics.text):wave==='i'?8:1), envelope: lyrics||wave==='i'?'off':'0253', reverb: {value:0} };
@@ -381,18 +391,18 @@ class Reader {
         if (!mod||!'staq'.includes(mod)) this.error('FM requires a sound atom after colon: :s100, :t100, :a100 or :q100.');
         if(result.modulation)this.error('Only one FM modulator per sound is supported in this prototype.');
         this.p++; result.modulatorWave=mod as Exclude<Wave,'n'|'i'>; result.modulation = this.value(100,undefined,[20,12000]);
-      } else if (op === 'o') result.freq=this.value(440);
+      } else if (op === 'o') result.freq=this.value(440,undefined,[20,20000]);
       else if(op==='w'){if(!lyrics?.vocoder)this.error('w is a lyric vocoder blend: l[text]:s220w4.');result.wet=this.value(9,undefined,[0,9]);if(result.wet.sequence)this.error('Vocoder blend w takes one value or an interpolation.');}
       else if (op === 'i') result.index=this.value(1,undefined,[0,20]);
       else if (op === 'v') {const volume=this.intensity();result.volume=volume.setting;if(volume.gate!==undefined){result.duration=volume.gate;result.durationValue=undefined;explicitDuration=true;}}
       else if(op==='p'&&/^\[\s*(?:(?:xyz|x|o)(?:[\s,])|o\d|\d{3}(?:[><]|\]))/.test(this.text.slice(this.p))){result.spatial=this.spatialValue();result.panExplicit=true;}
       else if (op === 'p') {const pan=this.panValue();result.pan=pan.setting;result.panRandom=pan.random;result.panExplicit=true;}
       else if (op === "'") {
-        result.durationValue=undefined;
+        result.durationPath=undefined;result.durationValue=undefined;
         if(this.peek()==='*'){result.durationValue=this.parameterValue();result.durationRange=undefined;result.durationChoices=undefined;result.durationEnd=undefined;}
         else if(this.peek()==='?'){
           const spec=this.randomSpec([.1,2],[.001,MAX_TIME_SECONDS]);result.durationChoices='choices'in spec?spec.choices:undefined;const range:[number,number]='choices'in spec?[Math.min(...spec.choices),Math.max(...spec.choices)]:spec.range;result.durationRange=range;result.duration=range[1];
-        }else {result.duration=this.time();result.durationRange=undefined;result.durationChoices=undefined;result.durationEnd=undefined;if(this.peek()==='>'||this.peek()==='<'){const direction=this.peek();this.p++;result.durationEnd=this.time();if(direction==='<')[result.duration,result.durationEnd]=[result.durationEnd,result.duration];}}
+        }else {result.duration=this.time();result.durationRange=undefined;result.durationChoices=undefined;result.durationEnd=undefined;if(this.peek()==='>'||this.peek()==='<'){const direction=this.peek(),values=[result.duration];while(this.peek()==='>'||this.peek()==='<'){if(this.peek()!==direction)this.error('Use one direction throughout a time path.');this.p++;values.push(this.time());if(values.length>16)this.error('Time paths support at most 16 values.');}if(direction==='<')values.reverse();result.duration=values[0];result.durationEnd=values.at(-1);if(values.length>2)result.durationPath=values;}}
         explicitDuration=true;
       }
       else if (op === 'e') {
@@ -411,7 +421,7 @@ class Reader {
     if(wave==='i'&&!explicitDuration){const timed=[result.freq,result.pan,result.volume,result.modulation,result.index,result.filter,result.delay,result.chop,result.reverb,...(result.spatial?.values??[])].filter(v=>v?.duration&&!v.followGate);if(timed.length){result.duration=Math.max(...timed.map(v=>v!.duration!));explicitDuration=true;}}
     if(!explicitDuration)result.duration=Math.max(result.duration,result.pan.duration||0,result.volume.duration||0,result.modulation?.duration||0,result.index.duration||0,result.filter?.duration||0,result.delay?.duration||0,result.wet?.duration||0,result.chop?.duration||0,result.reverb.duration||0,...(result.spatial?.values.map(v=>v.duration??0)??[]));
     if([result.freq,result.pan,result.volume,result.filter,result.chop,result.index].some(v=>v?.sequence)&&!explicitDuration)result.duration=60/this.tempo;
-    if(result.durationEnd!==undefined&&(![result.freq,result.pan,result.volume,result.filter,result.chop,result.index].some(v=>v?.sequence)||result.durationEnd<.001))this.error('A time transition requires a parameter sequence and positive step durations.');
+    if(result.durationEnd!==undefined&&(![result.freq,result.pan,result.volume,result.filter,result.chop,result.index].some(v=>v?.sequence)||result.durationEnd<.001||result.durationPath?.some(t=>!Number.isFinite(t)||t<.001||t>MAX_TIME_SECONDS)))this.error('A time transition requires a parameter sequence and positive step durations.');
     result.gateExplicit=explicitDuration;result.to = this.p;
     if (!(result.duration >= .001 && result.duration <= MAX_TIME_SECONDS)) this.error('Note duration must be between 0.001 and 86400 seconds.');
     if (!(offset >= 0 && offset <= 120)) this.error('Time offset must be between 0 and 120 seconds.');
@@ -438,7 +448,7 @@ export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, all
   const fail = (n: Range, message: string): never => { throw new SyntaxIssue(n.from, n.to, message); };
   const resolve = (s: Setting, args: number[], n: Range): Ramp => {
     const get = (v: Value) => {if(typeof v==='number')return v;if('parameter'in v)return args[v.parameter];result.randomTimeSource=source;return v.choices[Math.min(v.choices.length-1,Math.floor(durationForCycle([0,v.choices.length],result.seed,2000000+parameterDraw++,cycle)))];};
-    if(s.contour){try{return intensityContour(s.contour.values.map(get),s.contour.times);}catch(error){fail(n,error instanceof Error?error.message:String(error));}}
+    if(s.contour){try{const c=s.contour,values=c.values.map((v,i)=>{const range=c.ranges?.[i]??s.random?.[i];if(range){result.randomTimeSource=source;const id=1000000+parameterDraw++;return c.logarithmic?frequencyForCycle(range,result.seed,id,cycle):durationForCycle(range,result.seed,id,cycle);}return get(v);});if(c.bounds&&values.some(v=>v<c.bounds![0]||v>c.bounds![1]))fail(n,'A contour waypoint is outside the parameter range.');return c.control?parameterContour(values,c.times,c.reverse,s.exponential):intensityContour(values,c.times);}catch(error){if(error instanceof SyntaxIssue)throw error;fail(n,error instanceof Error?error.message:String(error));}}
     let start = get(s.value), end = s.end === undefined ? start : get(s.end);if(s.random){result.randomTimeSource=source;const id=1000000+parameterDraw++;if(s.random[0])start=durationForCycle(s.random[0],result.seed,id,cycle);end=s.end===undefined?start:s.random[1]?durationForCycle(s.random[1],result.seed^0xabc,id,cycle):end;}
     if (!Number.isFinite(start) || !Number.isFinite(end)) fail(n, 'Missing function argument.');
     if(s.exponential&&!(start>0&&end>0))fail(n,'Exponential sweep ^ needs positive endpoints.');
@@ -448,7 +458,7 @@ export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, all
     if(!result.speakers)fail(range,'Spatial p needs !spk[[1 x y z] [2 x y z] ...].');
     if(setting.route){const route=setting.route,speakers=result.speakers!;if(route.some(id=>!speakers.some(s=>s.id===id)))fail(range,'Raw p paths need declared speaker IDs.');return {mode:'outputs',values:speakers.map(s=>{const values=route.map(id=>s.id===id?9:0),points=values.map((value,i)=>({time:route.length>1?duration*i/(route.length-1):0,value}));return {start:values[0],end:values.at(-1)!,duration:route.length>1?duration:0,...(route.length>1?{points}:{})};})};}
     if(setting.mode==='outputs'&&setting.values.length!==result.speakers!.length)fail(range,'p[o ...] needs exactly one gain per declared speaker, in row order.');
-    const values=setting.values.map(v=>{const ramp=resolve(v,args,range);if([ramp.start,ramp.end].some(x=>setting.mode==='xyz'?x< -1||x>1:x<0||x>9))fail(range,setting.mode==='xyz'?'Spatial XYZ is -1 to 1.':'Output gains are 0–9.');return v.followGate?{...ramp,duration}:ramp;});
+    const values=setting.values.map(v=>{const ramp=resolve(v,args,range);if([ramp.start,ramp.end].some(x=>setting.mode==='xyz'?x< -1||x>1:x<0||x>9))fail(range,setting.mode==='xyz'?'Spatial XYZ is -1 to 1.':'Output gains are 0–9.');return v.followGate?fitRampDuration(ramp,duration):ramp;});
     return {mode:setting.mode,values};
   };
   const emit = (nodes: Ast[], base: number, args: number[] = [], call?: Range, depth = 0): number => {
@@ -467,15 +477,15 @@ export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, all
       if(n.kind==='config'){if(n.bpm)(result.tempos??=[]).push({bpm:n.bpm,t:base,from:n.from,to:n.to});if(n.input)inputGains[n.input.channel]=n.input.gain;if(n.mode)sequenceMode=n.mode;if(n.tuning)tuning=n.tuning;if(n.root!==undefined){const value=typeof n.root==='number'?n.root:args[n.root.parameter];if(!Number.isFinite(value)||value<20||value>12000)fail(n,'Root argument o must be 20–12000 Hz.');root=value;}if(n.map)map=n.map;if(n.walk)walk=n.walk;continue;}
       if(n.kind==='bus'){
         if(result.outputBuses.length>=32)fail(n,'At most 32 output buses.');
-        const effects:BusEffect[]=n.effects.map(e=>{if(e.spatialSetting)return {kind:e.kind,value:0,spatial:resolveSpatial(e.spatialSetting,args,n,0)};const r=e.setting?resolve(e.setting,args,n):{start:e.value,end:e.value,duration:0},follow=(e.kind==='pan'||e.kind==='filter')&&e.setting?.followGate;return {kind:e.kind,value:r.start,...(r.duration||follow?{ramp:follow?{...r,duration:0}:r}:{})};});
+        const effects:BusEffect[]=n.effects.map(e=>{if(e.spatialSetting)return {kind:e.kind,value:0,spatial:resolveSpatial(e.spatialSetting,args,n,0)};const r=e.setting?resolve(e.setting,args,n):{start:e.value,end:e.value,duration:0},follow=e.setting?.followGate&&(['pan','filter'].includes(e.kind)||e.setting?.contour?.control);return {kind:e.kind,value:r.start,...(r.duration||follow?{ramp:r}:{})};});
         if(effects.some(e=>[e.value,e.ramp?.end??e.value,...(e.ramp?.points?.map(p=>p.value)??[])].some(v=>!Number.isFinite(v)||(e.kind==='delay'?v<MIN_DELAY_SECONDS||v>MAX_DELAY_SECONDS:e.kind==='pan'?v< -1||v>1:v<0||v>9))))fail(n,'Bus v/r/h/f must be 0–9; p is -1–1; d is 0.001–9 seconds.');
         if(result.outputBuses.reduce((sum,b)=>sum+b.effects.length,0)+n.effects.length>32)fail(n,'At most 32 shared output effects.');
         const volume=resolve(n.volume??{value:9},args,n);
         if([volume.start,volume.end,...(volume.points?.map(p=>p.value)||[])].some(v=>v<0||v>9))fail(n,'Bus output v must be 0–9.');
         const firstEvent=result.events.length,firstCircuit=result.feedback.length,id=result.outputBuses.length;
-        const bus={id,t:base,dur:0,tail:effects.reduce((sum,e)=>sum+(e.kind==='reverb'?reverbSeconds(Math.max(e.value,e.ramp?.end??e.value)):e.kind==='delay'?echoTail(Math.max(e.value,e.ramp?.end??e.value)):0),0),effects,volume,from:n.from,to:n.to};result.outputBuses.push(bus);
-        const previousGate=inheritedGate,gate=n.duration??Math.max(0,...n.effects.map((e,i)=>e.setting?.followGate===false?effects[i].ramp?.duration??0:0));if(gate>0)inheritedGate=base+gate;let end:number;try{end=emit(n.nodes,base,args,call,depth+1);}finally{inheritedGate=previousGate;}bus.dur=n.duration??Math.max(.001,end-base,volume.duration,...effects.map(e=>e.ramp?.duration??0));
-        effects.forEach((effect,i)=>{if(effect.spatial)effect.spatial=resolveSpatial(n.effects[i].spatialSetting!,args,n,bus.dur);if(effect.ramp&&(effect.kind==='pan'||effect.kind==='filter')&&n.effects[i].setting?.followGate)effect.ramp.duration=bus.dur;});
+        const bus={id,t:base,dur:0,tail:effects.reduce((sum,e)=>sum+(e.kind==='reverb'?reverbSeconds((e.ramp?rampPeak(e.ramp):e.value)):e.kind==='delay'?echoTail((e.ramp?rampPeak(e.ramp):e.value)):0),0),effects,volume,from:n.from,to:n.to};result.outputBuses.push(bus);
+        const previousGate=inheritedGate,gate=n.duration??Math.max(0,...n.effects.map((e,i)=>e.setting?.followGate===false?effects[i].ramp?.duration??0:0));if(gate>0)inheritedGate=base+gate;let end:number;try{end=emit(n.nodes,base,args,call,depth+1);}finally{inheritedGate=previousGate;}bus.dur=n.duration??Math.max(.001,end-base,volume.duration,...effects.map((e,i)=>(n.effects[i].setting?.followGate&&(['pan','filter'].includes(n.effects[i].kind)||n.effects[i].setting?.contour?.control))?0:e.ramp?.duration??0));
+        effects.forEach((effect,i)=>{if(effect.spatial)effect.spatial=resolveSpatial(n.effects[i].spatialSetting!,args,n,bus.dur);if(effect.ramp&&(n.effects[i].setting?.followGate&&(['pan','filter'].includes(n.effects[i].kind)||n.effects[i].setting?.contour?.control)))effect.ramp=fitRampDuration(effect.ramp,bus.dur);});
         if(firstEvent===result.events.length)fail(n,'An output bus needs a sound or a circuit.');
         if(n.duration!==undefined&&result.events.slice(firstEvent).some(e=>e.t+(e.durationRange?.[1]??e.dur)>base+bus.dur)||bus.dur<end-base||bus.dur<=0||base+bus.dur>MAX_TIME_SECONDS)fail(n,'Output bus lifetime must cover its contents and fit within 86400 seconds.');
         let childTail=0;
@@ -507,6 +517,9 @@ export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, all
         if(first===result.events.length)fail(n,'A digital feedback circuit needs an excitation, e.g. {n1v0.03\'0.02}.');
         if(result.events.slice(first).some(e=>e.feedbackBus!==undefined))fail(n,'Nested feedback circuits are not supported yet.');
         if(n.duration===undefined)circuit.dur=Math.max(8,end-base,...result.events.slice(first).map(e=>e.t+(e.durationRange?.[1]??e.dur)-base),circuit.delay.duration,circuit.gain.duration,circuit.filter.duration,circuit.volume.duration,...(band?[...band.frequency.map(f=>f.duration),band.drive.duration]:[]),n.delayRight?.duration??0,n.gainRight?.duration??0,circuit.crossRamp?.duration??0,...(band?.rqRamps?.map(r=>r.duration)||[]));
+        for(const key of ['delay','gain','filter','volume','delayRight','gainRight'] as const){const setting=n[key];if(setting?.followGate&&setting.contour?.control&&circuit[key])circuit[key]=fitRampDuration(circuit[key]!,circuit.dur);}
+        if(n.crossSetting?.followGate&&n.crossSetting.contour?.control&&circuit.crossRamp)circuit.crossRamp=fitRampDuration(circuit.crossRamp,circuit.dur);
+        if(band){band.frequency=band.frequency.map((r,i)=>n.band?.[i].followGate&&n.band?.[i].contour?.control?fitRampDuration(r,circuit.dur):r) as [Ramp,Ramp];if(band.rqRamps)band.rqRamps=band.rqRamps.map((r,i)=>n.rq?.[i].followGate&&n.rq?.[i].contour?.control?fitRampDuration(r,circuit.dur):r) as [Ramp,Ramp];if(n.drive?.followGate&&n.drive.contour?.control)band.drive=fitRampDuration(band.drive,circuit.dur);}
         if(result.events.slice(first).some(e=>e.t+(e.durationRange?.[1]??e.dur)>base+circuit.dur)||!(circuit.dur>=.025&&base+circuit.dur<=MAX_TIME_SECONDS)||end>base+circuit.dur)fail(n,'Circuit lifetime must cover its sounds and fit within 86400 seconds.');
         for(const event of result.events.slice(first)){event.feedbackBus=id;event.traces=[{from:n.from,to:n.to},...event.traces];}
         finish=Math.max(finish,base+circuit.dur);continue;
@@ -594,12 +607,12 @@ export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, all
         const rotation=futures.filter(f=>f.name===name).reduce((sum,f)=>sum+Math.min(f.count,Math.floor((elapsed+base+1e-9)/f.every))*f.shift,0);
         const lists=fields.map(key=>({key,leaves:sequenceLeaves(n[key]!.sequence!,n.duration,sequenceMode==='spatial',rotation)}));
         const lengths=lists.map(l=>Math.round((l.leaves.at(-1)!.at+l.leaves.at(-1)!.dur)/n.duration));
-        const gcd=(a:number,b:number):number=>b?gcd(b,a%b):a;const steps=lengths.reduce((a,b)=>a*b/gcd(a,b),1);if(steps>128)fail(n,'Combined sequence period exceeds 128 steps.');const stepDurations=Array.from({length:steps},(_,i)=>n.durationChoices?n.durationChoices[Math.min(n.durationChoices.length-1,Math.floor(durationForCycle([0,n.durationChoices.length],result.seed,100000+draw*128+i,cycle)))]:n.durationRange?durationForCycle(n.durationRange,result.seed,100000+draw*128+i,cycle):n.durationEnd===undefined?n.duration:n.duration+(n.durationEnd-n.duration)*(steps===1?0:i/(steps-1)));const boundaries=[0];for(const d of stepDurations)boundaries.push(boundaries.at(-1)!+d);const warp=(time:number)=>{const step=time/n.duration,index=Math.min(steps-1,Math.floor(step+1e-9));return step>=steps?boundaries[steps]:boundaries[index]+(step-index)*stepDurations[index];};const duration=boundaries[steps];
+        const gcd=(a:number,b:number):number=>b?gcd(b,a%b):a;const steps=lengths.reduce((a,b)=>a*b/gcd(a,b),1);if(steps>128)fail(n,'Combined sequence period exceeds 128 steps.');const durationAt=(i:number)=>{const values=n.durationPath;if(!values)return n.durationEnd===undefined?n.duration:n.duration+(n.durationEnd-n.duration)*(steps===1?0:i/(steps-1));const position=steps===1?0:i/(steps-1)*(values.length-1),low=Math.floor(position),high=Math.min(values.length-1,low+1);return values[low]+(values[high]-values[low])*(position-low);};const stepDurations=Array.from({length:steps},(_,i)=>n.durationChoices?n.durationChoices[Math.min(n.durationChoices.length-1,Math.floor(durationForCycle([0,n.durationChoices.length],result.seed,100000+draw*128+i,cycle)))]:n.durationRange?durationForCycle(n.durationRange,result.seed,100000+draw*128+i,cycle):durationAt(i));const boundaries=[0];for(const d of stepDurations)boundaries.push(boundaries.at(-1)!+d);const warp=(time:number)=>{const step=time/n.duration,index=Math.min(steps-1,Math.floor(step+1e-9));return step>=steps?boundaries[steps]:boundaries[index]+(step-index)*stepDurations[index];};const duration=boundaries[steps];
         const times=[...new Set(lists.flatMap((l,index)=>Array.from({length:steps/lengths[index]},(_,repeat)=>l.leaves.map(v=>Number((v.at+repeat*lengths[index]*n.duration).toFixed(12)))).flat()))].sort((a,b)=>a-b);
         const first=result.events.length;
         for(let slot=0;slot<times.length;slot++){
           const rawTime=times[slot],time=warp(rawTime),end=slot+1<times.length?warp(times[slot+1]):duration;let rest=false;
-          const copy={...n,...(n.lyrics?{lyrics:{...n.lyrics,from:time/duration,to:end/duration}}:{}),offset:0,duration:end-time,durationRange:undefined,durationChoices:undefined,durationEnd:undefined};
+          const copy={...n,...(n.lyrics?{lyrics:{...n.lyrics,from:time/duration,to:end/duration}}:{}),offset:0,duration:end-time,durationRange:undefined,durationChoices:undefined,durationEnd:undefined,durationPath:undefined};
           for(const {key,leaves} of lists){const span=leaves.at(-1)!.at+leaves.at(-1)!.dur,local=rawTime%span,leaf=[...leaves].reverse().find(v=>v.at<=local+1e-9)!;if(leaf.rest){rest=true;break;}let value=leaf.parameter===undefined?leaf.value!:args[leaf.parameter]-(leaf.degree?1:0);if(leaf.parameter!==undefined&&(!Number.isFinite(value)||leaf.degree&&(!Number.isInteger(value)||value<0)))fail(n,'Sequence arguments require a finite value, or a positive integer pitch/table position.');if(leaf.random){result.randomTimeSource=source;const defaults:[number,number]=key==='freq'?(leaf.degree?[1,(tuning??parseTuning('12')).cents.length]:[55,1760]):key==='pan'?[-1,1]:key==='index'?[0,20]:[0,9],bounds:[number,number]=leaf.randomBounds?[leaf.randomOpen?.[0]?defaults[0]:leaf.randomBounds[0],leaf.randomOpen?.[1]?defaults[1]:leaf.randomBounds[1]]:defaults,choices=leaf.randomChoices,values=choices??bounds;
             if((!choices&&bounds[0]>bounds[1])||!values.every(Number.isFinite))fail(n,'Random bounds must be ordered and finite.');const id=200000+draw*16384+slot*16+sequenceFields.indexOf(key);
             if(leaf.degree&&(values.some(v=>!Number.isInteger(v)||v<1)))fail(n,'Random pitch positions use positive integers.');
@@ -630,7 +643,7 @@ export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, all
       const freq = resolve(n.freq, args, n), volume = resolve(n.volume, args, n), pan = resolve(n.pan, args, n);
       if ([volume.start,volume.end,...(volume.points?.map(point=>point.value)||[])].some(value=>value<0||value>9)) fail(n, 'Volume endpoints must be between 0 and 9.');
       if ([pan.start, pan.end].some(v => v < -1 || v > 1)) fail(n, 'Pan must be between -1 and 1.');
-      if (n.wave === 'n'||n.wave==='i' ? freq.start < 1 || freq.start > (n.wave==='i'?8:3) || freq.start !== freq.end || !Number.isInteger(freq.start) : [freq.start, freq.end].some(v => v < 20 || v > 20000)) fail(n, n.wave==='i'?'Input channel must be an integer from 1 to 8.':n.wave === 'n' ? 'Noise variants: n1 white, n2 pink, n3 brown.' : 'Frequency must be between 20 and 20000 Hz.');
+      if (n.wave === 'n'||n.wave==='i' ? freq.start < 1 || freq.start > (n.wave==='i'?8:3) || freq.start !== freq.end || freq.points?.some(p=>p.value!==freq.start) || !Number.isInteger(freq.start) : [freq.start, freq.end].some(v => v < 20 || v > 20000)) fail(n, n.wave==='i'?'Input channel must be an integer from 1 to 8.':n.wave === 'n' ? 'Noise variants: n1 white, n2 pink, n3 brown.' : 'Frequency must be between 20 and 20000 Hz.');
       const reverb=resolve(n.reverb,args,n),chop=n.chop&&resolve(n.chop,args,n);if([reverb.start,reverb.end].some(v=>v<0||v>9)||chop&&[chop.start,chop.end].some(v=>v<0||v>9))fail(n,'Reverb r and chopper h must be 0–9.');
       const delay=n.delay&&resolve(n.delay,args,n);if(delay&&[delay.start,delay.end].some(v=>v<MIN_DELAY_SECONDS||v>MAX_DELAY_SECONDS))fail(n,'Delay d must be 0.001–9 seconds.');
       const filter=n.filter&&resolve(n.filter,args,n);
@@ -648,21 +661,22 @@ export function compile(source: string, seed = 3181, cycle = 0, elapsed = 0, all
         const randomEndRange=n.freqEndRange?.map(f=>Math.min(20000,f*ratio)) as [number,number]|undefined;
         const e: NoteEvent = { ...range, id: result.events.length, t: time, dur: duration,...(n.lyrics?{lyrics:n.lyrics}:{}),...(n.durationRange?{durationRange:n.durationRange}:{}),...(n.durationChoices?{durationChoices:n.durationChoices}:{}), ...(n.wave==='i'?{inputChannel:freq.start}:{}),wave:n.waveOptions?timbreForCycle(n.waveOptions,result.seed,result.events.length,0):n.wave,...(n.waveOptions?{waveOptions:n.waveOptions}:{}),
           ...(randomRange?{freqRange:randomRange}:{}),...(randomEndRange?{freqEndRange:randomEndRange}:{}),...(n.freqRandomSweep?{freqRandomSweep:true,freqSweepFollowsGate:n.freqSweepFollowsGate}:{}),
-          freq: { ...freq, start: Math.min(20000, freq.start * ratio), end: Math.min(20000, freq.end * ratio) },
+          freq: { ...freq, start: Math.min(20000, freq.start * ratio), end: Math.min(20000, freq.end * ratio),...(freq.points?{points:freq.points.map(p=>({...p,value:Math.min(20000,p.value*ratio)}))}:{}) },
           volume:n.wave==='i'?{...volume,start:volume.start*(inputGains[freq.start]??1),end:volume.end*(inputGains[freq.start]??1),points:volume.points?.map(p=>({...p,value:p.value*(inputGains[freq.start]??1)}))}:volume, pan: node&&!map&&!n.panExplicit ? { start: node.x, end: node.x, duration: 0 } : pan,
-          ...(n.spatial?{spatial:resolveSpatial(n.spatial,args,n,duration)}:node&&result.room&&result.speakers&&!n.panExplicit?{spatial:{mode:'xyz' as const,values:[node.x,node.y,node.z].map(value=>({start:value,end:value,duration:0}))}}:{}),envelope: n.envelope,...(wet?{vocoderMix:n.wet?.followGate?{...wet,duration}:wet}:{}),delay, filter, chop:chop?.start,...(chop?.duration?{chopRamp:chop}:{}), reverb:Math.max(reverb.start,reverb.end),...(reverb.duration?{reverbRamp:reverb}:{}), modulation, modulatorWave:n.modulatorWave, index, traces: control ? [control, range] : [range], node,...(node?{axisMap:map??'pov',axisHolds:(map??'pov').split('').map((target,axis,targets)=>target!=='_'&&targets.lastIndexOf(target)!==axis?'overridden':target==='p'&&n.panExplicit?'manual':target==='o'&&(n.wave==='n'||n.wave==='i')?'noise/input':target==='g'&&(n.wave==='n'||n.wave==='i')?'noise/input':target==='i'&&!modulation&&!(map??'pov').includes('g')?'no FM':'')} :{}),soundRange:{from:n.from,to:n.to},...(n.panRandom?{panRandom:n.panRandom}:{}) };
+          ...(n.spatial?{spatial:resolveSpatial(n.spatial,args,n,duration)}:node&&result.room&&result.speakers&&!n.panExplicit?{spatial:{mode:'xyz' as const,values:[node.x,node.y,node.z].map(value=>({start:value,end:value,duration:0}))}}:{}),envelope: n.envelope,...(wet?{vocoderMix:n.wet?.followGate?{...wet,duration}:wet}:{}),delay, filter, chop:chop?.start,...(chop?.duration?{chopRamp:chop}:{}), reverb:Math.max(reverb.start,reverb.end,...(reverb.points?.map(p=>p.value)??[])),...(reverb.duration?{reverbRamp:reverb}:{}), modulation, modulatorWave:n.modulatorWave, index, traces: control ? [control, range] : [range], node,...(node?{axisMap:map??'pov',axisHolds:(map??'pov').split('').map((target,axis,targets)=>target!=='_'&&targets.lastIndexOf(target)!==axis?'overridden':target==='p'&&n.panExplicit?'manual':target==='o'&&(n.wave==='n'||n.wave==='i')?'noise/input':target==='g'&&(n.wave==='n'||n.wave==='i')?'noise/input':target==='i'&&!modulation&&!(map??'pov').includes('g')?'no FM':'')} :{}),soundRange:{from:n.from,to:n.to},...(n.panRandom?{panRandom:n.panRandom}:{}) };
         if(node){
           const route=map??'pov',routedVolume=e.volume;
           for(let axis=0;axis<3;axis++){const coordinate=[node.x,node.y,node.z][axis],unit=(coordinate+1)/2,target=route[axis];
             const scalar=(value:number):Ramp=>({start:value,end:value,duration:0});
-            if(target==='p'&&!n.panExplicit)e.pan=scalar(coordinate);else if(target==='o'&&n.wave!=='n'&&n.wave!=='i')e.freq={...e.freq,start:Math.min(12000,freq.start*2**(coordinate+1)),end:Math.min(12000,freq.end*2**(coordinate+1))};
+            if(target==='p'&&!n.panExplicit)e.pan=scalar(coordinate);else if(target==='o'&&n.wave!=='n'&&n.wave!=='i')e.freq={...e.freq,start:Math.min(12000,freq.start*2**(coordinate+1)),end:Math.min(12000,freq.end*2**(coordinate+1)),...(freq.points?{points:freq.points.map(p=>({...p,value:Math.min(12000,p.value*2**(coordinate+1))}))}:{})};
             else if(target==='v')e.volume={...routedVolume,start:routedVolume.start*unit,end:routedVolume.end*unit,points:routedVolume.points?.map(p=>({...p,value:p.value*unit}))};
             else if(target==='g'&&n.wave!=='n'&&n.wave!=='i')e.generatorMix=Math.max(0,Math.min(9,unit*9));else if(target==='r'){e.reverb=unit*9;e.reverbRamp=undefined;}else if(target==='f')e.filter=scalar(unit*9);else if(target==='h'){e.chop=unit*9;e.chopRamp=undefined;}else if(target==='d')e.delay=scalar(.001*8000**unit);else if(target==='i')e.index=scalar(unit*20);
           }
         }
-        if(node&&tuning&&n.wave!=='n'&&n.wave!=='i'){e.freq={...e.freq,start:quantizeHz(e.freq.start,tuning,root),end:quantizeHz(e.freq.end,tuning,root)};}
+        if(node&&tuning&&n.wave!=='n'&&n.wave!=='i'){e.freq={...e.freq,start:quantizeHz(e.freq.start,tuning,root),end:quantizeHz(e.freq.end,tuning,root),...(e.freq.points?{points:e.freq.points.map(p=>({...p,value:quantizeHz(p.value,tuning!,root)}))}:{})};}
         if(node?.capsule&&e.modulation){const start=e.freq.start/freq.start,end=e.freq.end/freq.end;e.modulation={...e.modulation,start:Math.min(12000,e.modulation.start*start),end:Math.min(12000,e.modulation.end*end),points:e.modulation.points?.map(p=>({...p,value:Math.min(12000,p.value*start)}))};}
-        const fit=(r:Ramp,s:Setting|undefined):Ramp=>n.gateExplicit&&s?.followGate?{...r,duration,...(r.points?{points:r.points.map(p=>({...p,time:r.duration?p.time*duration/r.duration:0}))}:{})}:r;
+        const hasControlPath=[n.freq,n.volume,n.pan,n.index,n.filter,n.delay,n.modulation,n.chop,n.reverb,n.wet].some(s=>s?.contour?.control);
+        const fit=(r:Ramp,s:Setting|undefined):Ramp=>(n.gateExplicit||hasControlPath)&&s?.followGate?{...r,duration,...(r.points?{points:r.points.map(p=>({...p,time:r.duration?p.time*duration/r.duration:0}))}:{})}:r;
         e.freq=fit(e.freq,n.freq);e.volume=fit(e.volume,n.volume);e.pan=fit(e.pan,n.pan);e.index=fit(e.index,n.index);
         if(e.filter)e.filter=fit(e.filter,n.filter);if(e.delay)e.delay=fit(e.delay,n.delay);if(e.modulation)e.modulation=fit(e.modulation,n.modulation);if(e.chopRamp)e.chopRamp=fit(e.chopRamp,n.chop);if(e.reverbRamp)e.reverbRamp=fit(e.reverbRamp,n.reverb);
         if(randomRange||randomEndRange)e.freq=frequencyRampForCycle(e,result.seed,cycle);

@@ -10,7 +10,7 @@ import {compile} from '../core/parser';
 import {durationForCycle,panForCycle,frequencyRampForCycle,timbreForCycle} from '../core/timbre';
 import {createEcho} from './delay';
 import {createOutputBus} from './output-bus';
-import {sliceRamp} from '../core/curves';
+import {sliceRamp,rampPeak} from '../core/curves';
 import {automateMapped,updateAutomation,automate,withAutomationSmoothing} from './automation';
 import {createFeedbackCircuit} from './feedback';
 import {filterHz,chopPeriod,chopCurve,echoTail,reverbSeconds,reverbMix} from './effects';
@@ -112,7 +112,7 @@ export class AudioEngine {
     if(score.events.some(e=>e.inputChannel))throw Error('Live input cannot be rendered offline. Record the input first.');
     if(spatial&&!score.speakers)throw Error('Spatial output needs a !spk speaker layout.');
     const busTail=Math.max(0,...score.outputBuses.filter(b=>b.parent===undefined).map(b=>b.tail));
-    const tail=Math.max(0,...score.events.map(e=>reverbSeconds(e.reverb)+(e.delay?echoTail(Math.max(e.delay.start,e.delay.end)):0)),...score.feedback.map(c=>Math.max(c.delay.start,c.delay.end)*12));
+    const tail=Math.max(0,...score.events.map(e=>reverbSeconds(e.reverb)+(e.delay?echoTail(rampPeak(e.delay)):0)),...score.feedback.map(c=>rampPeak(c.delay)*12));
     const duration=score.duration+tail+busTail+.05,channels=spatial?score.speakers!.length:2,sampleRate=48000,frames=Math.ceil(duration*sampleRate);
     if(frames*channels*4>384*1024*1024)throw Error('Render exceeds the 384 MiB audio buffer limit. Render a shorter section.');
     const context=new OfflineAudioContext(channels,frames,sampleRate),renderer=new AudioEngine();
@@ -176,7 +176,7 @@ export class AudioEngine {
     if(!compatible){this.queuedScore=score;return false;}
     this.queuedScore=undefined;
     const now=this.context.currentTime;
-    for(const voice of this.voices){let next=score.events.find(e=>e.id===voice.event.id);if(!next)continue;if(next.freqRange||next.freqEndRange)next={...next,freq:frequencyRampForCycle(next,score.seed,voice.cycle)};if(next.panRandom)next={...next,pan:panForCycle(next.pan,next.panRandom,score.seed,next.id,voice.cycle,next.dur)};const age=now-voice.at+voice.age;if(age<0||age>=next.dur)continue;withAutomationSmoothing(Math.min(this.hotEditSeconds,next.dur-age),()=>voice.update(next!,now,age));voice.event={...next,wave:voice.event.wave};this.finishAt=Math.max(this.finishAt,voice.at+next.dur-voice.age+reverbSeconds(next.reverb)+(next.delay?echoTail(Math.max(next.delay.start,next.delay.end)):0));}
+    for(const voice of this.voices){let next=score.events.find(e=>e.id===voice.event.id);if(!next)continue;if(next.freqRange||next.freqEndRange)next={...next,freq:frequencyRampForCycle(next,score.seed,voice.cycle)};if(next.panRandom)next={...next,pan:panForCycle(next.pan,next.panRandom,score.seed,next.id,voice.cycle,next.dur)};const age=now-voice.at+voice.age;if(age<0||age>=next.dur)continue;withAutomationSmoothing(Math.min(this.hotEditSeconds,next.dur-age),()=>voice.update(next!,now,age));voice.event={...next,wave:voice.event.wave};this.finishAt=Math.max(this.finishAt,voice.at+next.dur-voice.age+reverbSeconds(next.reverb)+(next.delay?echoTail(rampPeak(next.delay)):0));}
     for(const [key,circuit] of this.circuitInstances){const next=score.feedback[Number(key.split(':')[1])];if(next)withAutomationSmoothing(Math.min(this.hotEditSeconds,Math.max(0,circuit.end-now)),()=>circuit.update(next,now));}
     for(const [key,bus] of this.outputInstances){const next=score.outputBuses[Number(key.split(':')[1])];if(next)withAutomationSmoothing(Math.min(this.hotEditSeconds,Math.max(0,bus.end-now)),()=>bus.update(next,now));this.finishAt=Math.max(this.finishAt,bus.end);}
     this.score=score;for(const window of this.windows)if(window.score===old)window.score=score;this.tasks=this.tasks.map(task=>'event' in task?{t:task.t,event:score.events.find(e=>e.id===task.event.id)!}:'circuit' in task?{t:task.t,circuit:score.feedback[task.circuit.id]}:{t:task.t,bus:score.outputBuses[task.bus.id]});return true;
@@ -289,7 +289,7 @@ if(this.randomSource&&!this.queuedScore){
     if(age)event={...event,...(event.spatial?{spatial:{...event.spatial,values:event.spatial.values.map(v=>sliceRamp(v,age))}}:{}),dur:event.dur-age,freq:sliceRamp(event.freq,age),pan:sliceRamp(event.pan,age),volume:sliceRamp(event.volume,age),index:sliceRamp(event.index,age),filter:event.filter&&sliceRamp(event.filter,age),delay:event.delay&&sliceRamp(event.delay,age),vocoderMix:event.vocoderMix&&sliceRamp(event.vocoderMix,age),modulation:event.modulation&&sliceRamp(event.modulation,age)};
     if (!this.offline && this.voices.size >= 256) { this.droppedVoices++; return; }
     const ctx=this.context!, end=at+event.dur, gain=ctx.createGain(), volume=ctx.createGain(), pan=ctx.createStereoPanner();
-    this.finishAt=Math.max(this.finishAt,end+reverbSeconds(event.reverb)+(event.delay?echoTail(Math.max(event.delay.start,event.delay.end)):0));
+    this.finishAt=Math.max(this.finishAt,end+reverbSeconds(event.reverb)+(event.delay?echoTail(rampPeak(event.delay)):0));
     const clocks:ReturnType<typeof chopClock>[]=[];
     const nodes: AudioNode[]=[gain,volume,pan];
     const spatial=this.score?.speakers&&event.feedbackBus===undefined?createSpatialPanner(ctx,this.score.speakers,this.voicePlacement(event),event.pan,at,event.dur,1,this.score.room):undefined;
@@ -366,7 +366,7 @@ if(this.randomSource&&!this.queuedScore){
       updates.push((next,now,age)=>{const r=next.reverbRamp??{start:next.reverb,end:next.reverb,duration:0};automateMapped(dry.gain,r,v=>reverbMix(v).dry,now,age);automateMapped(wet.gain,r,v=>reverbMix(v).wet,now,age);});
     }
     const voice={source,gain,nodes,event:original,at,age,cycle,instance:this.serial++,gateAt:(now:number)=>clocks.reduce((gain,clock)=>gain*clock.levelAt(now),1),update:(next:NoteEvent,now:number,age:number)=>{for(const apply of updates)apply(next,now,age);}};this.voices.add(voice);
-    source.onended=()=>{this.voices.delete(voice);if(this.offline)return;if(!this.running){nodes.forEach(n=>n.disconnect());return;}this.tails.add(nodes);if(this.offline)return;setTimeout(()=>{source.disconnect();nodes.forEach(n=>n.disconnect());this.tails.delete(nodes);},(reverbSeconds(voice.event.reverb)+(voice.event.delay?echoTail(Math.max(voice.event.delay.start,voice.event.delay.end)):0))*1000);};
+    source.onended=()=>{this.voices.delete(voice);if(this.offline)return;if(!this.running){nodes.forEach(n=>n.disconnect());return;}this.tails.add(nodes);if(this.offline)return;setTimeout(()=>{source.disconnect();nodes.forEach(n=>n.disconnect());this.tails.delete(nodes);},(reverbSeconds(voice.event.reverb)+(voice.event.delay?echoTail(rampPeak(voice.event.delay)):0))*1000);};
     source.start(at);source.stop(end+.005);
   }
 }

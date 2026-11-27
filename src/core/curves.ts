@@ -31,7 +31,7 @@ export function rampValueAt(ramp:import('./types').Ramp,time:number):number {
   if(ramp.points){
     let previous=ramp.points[0];
     for(const next of ramp.points.slice(1)){
-      if(time<next.time){if(ramp.step)return previous.value;const span=next.time-previous.time;return span>0?previous.value+(next.value-previous.value)*(time-previous.time)/span:next.value;}
+      if(time<next.time){if(ramp.step)return previous.value;const span=next.time-previous.time;return span>0?(ramp.exponential?previous.value*(next.value/previous.value)**((time-previous.time)/span):previous.value+(next.value-previous.value)*(time-previous.time)/span):next.value;}
       previous=next;
     }
     return previous.value;
@@ -44,6 +44,21 @@ export function rampValueAt(ramp:import('./types').Ramp,time:number):number {
 export function sliceRamp(ramp:Ramp,age:number):Ramp {
  if(age<=0)return ramp;
  const start=rampValueAt(ramp,age),duration=Math.max(0,ramp.duration-age);
- if(ramp.points)return {start,end:ramp.end,duration,...(ramp.step?{step:true}:{}),points:[{time:0,value:start},...ramp.points.filter(p=>p.time>age).map(p=>({time:p.time-age,value:p.value}))]};
+ if(ramp.points)return {start,end:ramp.end,duration,...(ramp.exponential?{exponential:true}:{}),...(ramp.step?{step:true}:{}),points:[{time:0,value:start},...ramp.points.filter(p=>p.time>age).map(p=>({time:p.time-age,value:p.value}))]};
  return {...ramp,start,duration};
 }
+
+/** General control path: one final time is a total; intermediate times specify segment lengths. */
+export function parameterContour(values:number[],times:(number|undefined)[],reverse=false,exponential=false):Ramp {
+ if(values.length<2||values.length>16||values.some(v=>!Number.isFinite(v)))throw Error('Control contours need 2–16 finite values.');
+ if(times.some(t=>t!==undefined&&(!Number.isFinite(t)||t<=0||t>MAX_TIME_SECONDS)))throw Error('Contour times must be positive and at most 86400 seconds.');
+ if(exponential&&values.some(v=>v<=0))throw Error('Exponential contours need positive values.');
+ const totalOnly=times.slice(0,-1).every(t=>t===undefined),total=times.at(-1),points=[{time:0,value:values[0]}];let duration=0;
+ for(let i=1;i<values.length;i++){duration+=totalOnly&&total!==undefined?total/(values.length-1):times[i]??2;points.push({time:duration,value:values[i]});}
+ if(duration<=0||duration>MAX_TIME_SECONDS)throw Error('Contour duration must be positive and at most 86400 seconds.');
+ const ordered=reverse?points.slice().reverse().map(p=>({time:duration-p.time,value:p.value})):points;
+ return {start:ordered[0].value,end:ordered.at(-1)!.value,duration,points:ordered,...(exponential?{exponential:true}:{})};
+}
+export function fitRampDuration(ramp:Ramp,duration:number):Ramp {return {...ramp,duration,...(ramp.points?{points:ramp.points.map(p=>({...p,time:ramp.duration?p.time*duration/ramp.duration:0}))}:{})};}
+
+export function rampPeak(ramp:Ramp){return Math.max(ramp.start,ramp.end,...(ramp.points?.map(p=>p.value)??[]));}

@@ -1,5 +1,11 @@
 [
   {
+    "name": "Control paths · through the middle",
+    "detail": "Three or more waypoints in frequency, FM, filter, pan, reverb, delay and chopper",
+    "file": "Effects-paths.syn",
+    "category": "Effects"
+  },
+  {
     "name": "A · detached inheritance",
     "detail": "A whole motif inside each maternal/daughter capsule · N/U/D",
     "file": "A-capsule-motif.syn",

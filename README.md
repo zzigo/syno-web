@@ -141,6 +141,8 @@ Individual signatures begin with [A · apomixis](docs/growth/A-apomixis.md); see
 | `!` | Message namespace: tempo, sequencing behavior, title, visual, room, speaker or input setup. | `!b120`; `!vc` |
 | `.` | Decimal point within a number. Cmd/Ctrl+. is the panic shortcut. | `v0.5` |
 
+Continuous controls support 2–16 waypoints: `f9>1>5`, `i1>8>2`, `p-1>1>0`, and `s110>440>220`. A final total time distributes them equally; general control segment times can be explicit (`f9>1'3>5'7`). Use one direction throughout a path; `<` reverses it and `^` uses positive exponential interpolation. Volume keeps its established attack/hold/release phase-time convention. Sequence step durations also accept a path, e.g. `s[220 330 440 550 660]'1>0.2>0.6`, distributing the step lengths through each timing waypoint. Numeric channels, noise kinds and ADSR digits remain discrete. Compact XYZ also accepts `p[000>999>444]`.
+
 Untimed transitions inherit an explicit gate: `s220v0>2>0e0p-1>1'4`. Independent explicitly written transition times remain useful and are valid. A leading onset and a trailing gate serve different purposes. Onsets also prefix whole groups and their processors: `0.3(s220'0.4)2` starts at 0.3 s, then 0.7 s. `(sound)?` selects 1–9 integer repeats by default, seeded anew per loop. `)?[2 4 8]` selects listed counts; `)?[2:8]` selects an integer in the inclusive range. Explicit repeat counts and bounds are 1–128. A random repeat count cannot also declare a timed recurring root-loop period. Seconds and note values can coexist. A gate does not by itself create an arpeggiator: use a sequence or loop for repeated attacks.
 
 Random lists: `?[110 220 440]` chooses exactly those values; `?[110:880]` draws continuously within the interval; `?[110:]`, `?[:880]` and `?[:]` use contextual default bounds for omitted endpoints. Plain `[110 220]` is an ordered sequence. Random draws are seeded per loop.
@@ -258,6 +260,16 @@ New syNo instrument code: [0BSD](LICENSE). Reused generators, gateway SDK, runti
 The appendix below is generated from `src/core/help-content.ts`. It preserves detailed tables and examples alongside the concise character index above. The compiler and tests remain authoritative when older narrative notes differ.
 
 <!-- SYNO_HELP_START -->
+<details>
+<summary>Control paths · three or more values · all continuous operators</summary>
+
+<h3>Every waypoint is heard</h3><pre>i1r5h.1&gt;8f9&gt;1&gt;5p-1&gt;1'10~?1
+s110&gt;330&gt;165:s27.5&gt;55&gt;27.5i1&gt;7&gt;2v0&gt;2&gt;0f9&gt;1&gt;5p-1&gt;1&gt;0'10
+{s220'4}r0&gt;8&gt;0f9&gt;1&gt;5
+s220f9&gt;1'3&gt;5'7</pre><p>Frequency, modulation frequency, i, f, d, h, r, p, vocoder w, spatial components and feedback controls accept 2–16 waypoints. New untimed multipoint paths inherit the sound/group/circuit gate; in the input example, f visits 9 at 0 s, 1 at 5 s and 5 at 10 s. A single final time is the whole path duration, split equally. Intermediate time tags specify segment lengths for general controls; existing v attack/hold/release timing remains unchanged.</p><p>Use &gt; throughout, &lt; throughout to reverse the path, or ^ throughout for positive exponential waypoints. Random and parameter-bound waypoints are supported. Sequence step time also accepts paths, e.g. s[220 330 440 550 660]'1&gt;0.2&gt;0.6. Every waypoint is range-checked; channels, noise-kind selectors and ADSR digit strings retain their discrete meanings. Midpoint reverb/delay peaks are included when constructing audio graphs and tails. Compact physical XYZ supports p[000&gt;999&gt;444]; raw output paths keep p[o1&gt;4&gt;2]. Agents may supply 2–16-waypoint index/filter/pan arrays.</p>
+
+</details>
+
 <details>
 <summary>Group onsets · finite and random repeats · backslash</summary>
 

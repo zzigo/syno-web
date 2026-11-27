@@ -1,0 +1,12 @@
+# Continuous control paths: the middle value is a real waypoint, not discarded.
+# Every untimed path below follows the ten-second gate; its middle value lands at 5 s.
+# Input version: i1r5h.1>8f9>1>5p-1>1'10~?1 (requires microphone permission).
+!t[Through the middle]
+s110>330>165:s27.5>55>27.5i1>7>2v0>2>0f9>1>5h.1>8>.3r1>5>2d.1>.4>.2p-1>1>0'10
+# Own total time: s220f9>1>5'6
+# Individual segment times: s220f9>1'3>5'7
+# Reverse written order: s220f9<1<5'10
+# More vertices: s220f9>1>5>3'12
+# Shared bus: {s220'4}r0>8>0f9>1>5
+# Feedback: {n1v0.01'0.1}d.01>.03>.02g.5>1.1>.7f3>8>4v1'6
+# Spatial: spk4 s220p[000>999>444]'10

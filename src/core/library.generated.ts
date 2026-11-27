@@ -1,6 +1,13 @@
 // Generated from library/*.syn by scripts/sync-library.mjs.
 export const libraryStudies = [
   {
+    "name": "Control paths · through the middle",
+    "detail": "Three or more waypoints in frequency, FM, filter, pan, reverb, delay and chopper",
+    "file": "Effects-paths.syn",
+    "code": "# Continuous control paths: the middle value is a real waypoint, not discarded.\n# Every untimed path below follows the ten-second gate; its middle value lands at 5 s.\n# Input version: i1r5h.1>8f9>1>5p-1>1'10~?1 (requires microphone permission).\n!t[Through the middle]\ns110>330>165:s27.5>55>27.5i1>7>2v0>2>0f9>1>5h.1>8>.3r1>5>2d.1>.4>.2p-1>1>0'10\n# Own total time: s220f9>1>5'6\n# Individual segment times: s220f9>1'3>5'7\n# Reverse written order: s220f9<1<5'10\n# More vertices: s220f9>1>5>3'12\n# Shared bus: {s220'4}r0>8>0f9>1>5\n# Feedback: {n1v0.01'0.1}d.01>.03>.02g.5>1.1>.7f3>8>4v1'6\n# Spatial: spk4 s220p[000>999>444]'10\n",
+    "category": "Effects"
+  },
+  {
     "name": "A · detached inheritance",
     "detail": "A whole motif inside each maternal/daughter capsule · N/U/D",
     "file": "A-capsule-motif.syn",

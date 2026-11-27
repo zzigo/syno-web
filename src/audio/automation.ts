@@ -7,7 +7,7 @@ export function withAutomationSmoothing<T>(seconds:number,apply:()=>T):T {const 
 export function automationPlan(param:AudioParam){return plans.get(param);}
 function schedule(param:AudioParam,ramp:Ramp,at:number){
  param.setValueAtTime(ramp.start,at);
- if(ramp.points){for(const p of ramp.points.slice(1))ramp.step?param.setValueAtTime(p.value,at+p.time):param.linearRampToValueAtTime(p.value,at+p.time);}
+ if(ramp.points){for(const p of ramp.points.slice(1))ramp.step?param.setValueAtTime(p.value,at+p.time):ramp.exponential?param.exponentialRampToValueAtTime(p.value,at+p.time):param.linearRampToValueAtTime(p.value,at+p.time);}
  else if(ramp.duration){if(ramp.exponential)param.exponentialRampToValueAtTime(ramp.end,at+ramp.duration);else param.linearRampToValueAtTime(ramp.end,at+ramp.duration);}
 }
 export function automate(param:AudioParam,ramp:Ramp,at:number,scale=1){const scaled={...ramp,start:ramp.start*scale,end:ramp.end*scale,points:ramp.points?.map(p=>({time:p.time,value:p.value*scale}))};plans.set(param,{at,ramp:scaled,key:JSON.stringify(scaled)});schedule(param,scaled,at);}

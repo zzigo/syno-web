@@ -1,5 +1,6 @@
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 const entries=[
+ ['Effects-paths.syn','Control paths · through the middle','Three or more waypoints in frequency, FM, filter, pan, reverb, delay and chopper'],
  ['A-capsule-motif.syn','A · detached inheritance','A whole motif inside each maternal/daughter capsule · N/U/D'],
  ['autocode/08-A-rhythmic-birth.syn','A& · rhythmic and timbral births','Proportional daughter rhythm · probability rests · related new timbres'],
  ['spatial/07-Room-organism.syn','07 · Biome in a room','Metres / room-shaped growth / physical bodies + contour'],

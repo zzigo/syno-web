@@ -3,7 +3,7 @@ import {compile} from './parser';
 import {accretionLevels} from './accretion';
 import type {MutationRegion} from './mutation';
 import type {NoteEvent} from './types';
-interface Daughter {parent:number;shift:number;level:number;onset:number;duration:number;rhythm?:number[];rest?:number;timbre?:'s'|'t'|'a'|'q'|'n1'|'n2'|'n3';index?:number|[number,number];filter?:number|[number,number];pan?:number|[number,number]}
+interface Daughter {parent:number;shift:number;level:number;onset:number;duration:number;rhythm?:number[];rest?:number;timbre?:'s'|'t'|'a'|'q'|'n1'|'n2'|'n3';index?:number|number[];filter?:number|number[];pan?:number|number[]}
 /** The model composes parameters, never punctuation or an edit index. */
 export function parseDaughter(text:string):unknown|undefined {try{const value=JSON.parse(text);return value&&typeof value==='object'?value.daughter:undefined;}catch{return undefined;}}
 export function apomicticParents(source:string,region:MutationRegion,seed:number){
@@ -11,12 +11,12 @@ export function apomicticParents(source:string,region:MutationRegion,seed:number
  return [...new Map(events.map(e=>[`${e.from}:${e.to}`,e])).values()];
 }
 const number=agentNumber;
-function pair(value:unknown,lo:number,hi:number,name:string):number|[number,number]{
- const values=Array.isArray(value)?value:[value];if(![1,2].includes(values.length)||values.some(n=>typeof n!=='number'||!Number.isFinite(n)||n<lo||n>hi))throw Error(`${name} must be a number or two endpoints within ${lo}…${hi}.`);
- return values.length===1?values[0] as number:values as [number,number];
+function pair(value:unknown,lo:number,hi:number,name:string):number|number[]{
+ const values=Array.isArray(value)?value:[value];if(values.length<1||values.length>16||values.some(n=>typeof n!=='number'||!Number.isFinite(n)||n<lo||n>hi))throw Error(`${name} must be a number or 2–16 waypoints within ${lo}…${hi}.`);
+ return values.length===1?values[0] as number:values as number[];
 }
-function control(op:string,value:number|[number,number],duration:number){return op+(Array.isArray(value)?`${number(value[0])}>${number(value[1])}'${number(duration)}`:number(value));}
-function inherited(op:string,ramp:{start:number;end:number}|undefined,duration:number){return ramp?control(op,ramp.start===ramp.end?ramp.start:[ramp.start,ramp.end],duration):'';}
+function control(op:string,value:number|number[],duration:number){return op+(Array.isArray(value)?`${value.map(number).join('>')}'${number(duration)}`:number(value));}
+function inherited(op:string,ramp:{start:number;end:number;points?:{value:number}[]}|undefined,duration:number){return ramp?control(op,ramp.points?ramp.points.map(p=>p.value):ramp.start===ramp.end?ramp.start:[ramp.start,ramp.end],duration):'';}
 export function daughterCode(source:string,region:MutationRegion,seed:number,value:unknown,generation?:number){
  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('Expected a JSON daughter object.');
  const d=value as Daughter,keys=Object.keys(d);if(keys.some(key=>!['parent','shift','level','onset','duration','index','pan','filter','rhythm','rest','timbre'].includes(key)))throw Error('Daughter accepts parent, shift, level, onset, duration, rhythm, rest, timbre, index, pan and filter only.');
@@ -35,12 +35,12 @@ export function daughterCode(source:string,region:MutationRegion,seed:number,val
  if(!['s','t','a','q','n1','n2','n3'].includes(timbre))throw Error('timbre uses s/t/a/q/n1/n2/n3.');
  const wave=timbre[0],noise=wave==='n';
  const ratio=2**(d.shift/12),frequency=(ramp:NoteEvent['freq'],noise=false)=>{
-  const values=noise?[ramp.start,ramp.end]:[ramp.start*ratio,ramp.end*ratio];
+  const values=(ramp.points?.map(p=>p.value)??[ramp.start,ramp.end]).map(v=>noise?v:v*ratio);
   if(!noise&&values.some(n=>n<.1||n>12000))throw Error('The daughter frequency is outside the supported range.');
-  return values[0]===values[1]?number(values[0]):`${number(values[0])}>${number(values[1])}'${number(d.duration)}`;
+  return values.every(v=>v===values[0])?number(values[0]):`${values.map(number).join(ramp.exponential?'^':'>')}'${number(d.duration)}`;
  };
- const index=d.index===undefined?(parent.index.start===parent.index.end?parent.index.start:[parent.index.start,parent.index.end] as [number,number]):pair(d.index,0,20,'index');
- const pan=d.pan===undefined?(parent.pan.start===parent.pan.end?parent.pan.start:[parent.pan.start,parent.pan.end] as [number,number]):pair(d.pan,-1,1,'pan');
+ const index=d.index===undefined?(parent.index.points?parent.index.points.map(p=>p.value):parent.index.start===parent.index.end?parent.index.start:[parent.index.start,parent.index.end]):pair(d.index,0,20,'index');
+ const pan=d.pan===undefined?(parent.pan.points?parent.pan.points.map(p=>p.value):parent.pan.start===parent.pan.end?parent.pan.start:[parent.pan.start,parent.pan.end]):pair(d.pan,-1,1,'pan');
  const fm=!noise&&parent.modulation?':'+(parent.modulatorWave??'s')+frequency(parent.modulation)+control('i',index,d.duration):'';
  // One daughter capsule carries a proportional pulse motif, not unrelated notes.
  // Sustained daughters are the default; rhythmic subdivision is an occasional phenotype.
@@ -67,6 +67,6 @@ export function apomicticMessages(source:string,region:MutationRegion,seed:numbe
  if(!parents.length)throw Error('A needs an internal sound parent outside feedback returns.');
  const table=parents.map((p,i)=>({parent:i,wave:p.wave,Hz:p.freq.start,modulator:p.modulation?{wave:p.modulatorWave,Hz:p.modulation.start,index:p.index.start}:undefined,level:Math.max(p.volume.start,p.volume.end,...p.volume.points?.map(x=>x.value)??[]),pan:p.pan.start,duration:p.dur}));
  return [{role:'system' as const,content:`Compose one daughter voice by APOMIXIS. Write numbers with at most one decimal place (x.x); the host snaps pulse boundaries to 0.1 seconds. Inherit the chosen parent's identity and carrier/modulator ratio; a daughter may develop a related timbre without replacing her mother. Grow alongside all existing music. Choose musically meaningful somatic changes: FM index trajectory, transposition, onset (dormancy), pan trajectory and an audible intensity contour. The host writes the syNo syntax. DO NOT write syNo code, append, colons, or a complete patch.
-Return ONLY JSON {"daughter":{"parent":0,"shift":0,"level":0.5,"onset":0.1,"duration":1,"index":[1.2,3.6],"pan":[-0.3,0.5]}}. This is the response shape; compose your own values. parent is a listed integer. shift is semitones -12..12, usually a small mutation or a fifth/octave dispersal. level must be ${levels.min.toFixed(3)}..${levels.max.toFixed(3)}, preferably ${levels.suggested.map(number).join('..')}. onset >= 0; duration >= ${levels.presence.toFixed(3)}; onset+duration <= ${number(score.duration)} seconds. index is optional 0..20, pan optional -1..1, filter optional 0..9 (use 4..9 to keep pitched material audible); each may be a number or [start,end]. Use only the listed keys plus rhythm, rest and timbre. Sustained identity comes first: prefer one long evolving daughter gesture, occupying much of the loop. Do not turn every daughter into short repeated attacks. rhythm optionally gives 1–8 positive relative duration weights; the host permits subdivision only every third daughter, with pulses normally at least 0.4 seconds. Vary long contours, displacement and dormant rests; rhythm contrasts with sustained layers. rest is a 0–9 digit: 2 gives each daughter pulse a 20% chance of silence per loop, 5 gives 50%. Use moderate 1–4; preserve the original parent. timbre optionally chooses s/t/a/q/n1/n2/n3 as an inherited spectral mutation, not an unrelated new melody. If omitted, the host introduces a related timbral birth every 3–5 daughters depending on U. The host shapes a fade-in/fade-out contour. Change more than loudness.`},
+Return ONLY JSON {"daughter":{"parent":0,"shift":0,"level":0.5,"onset":0.1,"duration":1,"index":[1.2,3.6],"pan":[-0.3,0.5]}}. This is the response shape; compose your own values. parent is a listed integer. shift is semitones -12..12, usually a small mutation or a fifth/octave dispersal. level must be ${levels.min.toFixed(3)}..${levels.max.toFixed(3)}, preferably ${levels.suggested.map(number).join('..')}. onset >= 0; duration >= ${levels.presence.toFixed(3)}; onset+duration <= ${number(score.duration)} seconds. index is optional 0..20, pan optional -1..1, filter optional 0..9 (use 4..9 to keep pitched material audible); each may be a number or an array of 2–16 waypoints, e.g. [1,7,2]. Use only the listed keys plus rhythm, rest and timbre. Sustained identity comes first: prefer one long evolving daughter gesture, occupying much of the loop. Do not turn every daughter into short repeated attacks. rhythm optionally gives 1–8 positive relative duration weights; the host permits subdivision only every third daughter, with pulses normally at least 0.4 seconds. Vary long contours, displacement and dormant rests; rhythm contrasts with sustained layers. rest is a 0–9 digit: 2 gives each daughter pulse a 20% chance of silence per loop, 5 gives 50%. Use moderate 1–4; preserve the original parent. timbre optionally chooses s/t/a/q/n1/n2/n3 as an inherited spectral mutation, not an unrelated new melody. If omitted, the host introduces a related timbral birth every 3–5 daughters depending on U. The host shapes a fade-in/fade-out contour. Change more than loudness.`},
  {role:'user' as const,content:`Parents: ${JSON.stringify(table)}\nN/U/D: ${JSON.stringify(region.parameters??{count:24,mutation:.08,spread:1})}. Daughter generation ${generation+1}. Choose a parent and develop a recognizable clonal gesture; prioritize sustained timbral identity, contrasting rhythmic variability and probabilistic silences. Keep an audible long contour; do not reduce this daughter to a uniform chain of tiny notes; U governs how adventurous the variation is, D its spatial spread.${lastError?' Last rejected proposal: '+lastError+'. Correct it.':''}\nReturn one daughter JSON object.`}];
 }

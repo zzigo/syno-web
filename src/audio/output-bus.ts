@@ -1,3 +1,4 @@
+import {rampPeak} from '../core/curves';
 import {createSpatialPanner} from './spatial';
 import type {Speaker,Room} from '../core/spatial';
 import {chopClock} from './chop-clock';
@@ -15,7 +16,7 @@ function ordinaryBus(ctx:BaseAudioContext,bus:OutputBus,at:number,destination:Au
   if(effect.kind==='reverb'){
    const dry=ctx.createGain(),wet=ctx.createGain(),sum=ctx.createGain(),reverb=ctx.createConvolver();nodes.push(dry,wet,sum,reverb);
    tail.connect(dry).connect(sum);tail.connect(reverb).connect(wet).connect(sum);
-   const update=(value:Ramp,now:number,age=0)=>{const peak=Math.max(value.start,value.end);if(peak){const next=impulse(peak);if(reverb.buffer!==next)reverb.buffer=next;}automateMapped(dry.gain,value,v=>reverbMix(v).dry,now,age);automateMapped(wet.gain,value,v=>reverbMix(v).wet,now,age);};
+   const update=(value:Ramp,now:number,age=0)=>{const peak=rampPeak(value);if(peak){const next=impulse(peak);if(reverb.buffer!==next)reverb.buffer=next;}automateMapped(dry.gain,value,v=>reverbMix(v).dry,now,age);automateMapped(wet.gain,value,v=>reverbMix(v).wet,now,age);};
    update(ramp,at);updates.push(update);tail=sum;
   }else if(effect.kind==='volume'){
    const gain=ctx.createGain();nodes.push(gain);tail.connect(gain);tail=gain;

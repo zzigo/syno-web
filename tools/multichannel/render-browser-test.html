@@ -14,6 +14,8 @@ document.querySelector('#run').onclick=async()=>{
   result.textContent='Rendering…';downloads.replaceChildren();const report={};
   const silent=await new AudioEngine().render(compile("(s220v1e0'0.2 t330v1e0'0.2)~"),false,1);report.probabilityRest=energy(silent.buffer.getChannelData(0));assert(report.probabilityRest===0,'A definite group rest leaked audio');
   const capsules=await new AudioEngine().render(compile("A434(s165:s41.25i2v0.4e0'0.15 0.16n2v0.1e0f6'0.2)"),false,1);report.apomixis=energy(capsules.buffer.getChannelData(0));assert(report.apomixis>0.0001,'Capsule motif is silent');
+  const controlPaths=await new AudioEngine().render(compile("s110>330>165:s27.5>55>27.5i1>7>2v0>2>0f9>1>5h.1>8>.3r1>5>2d.01>.1>.02p-1>1>0'0.8"),false,1);report.controlPaths=energy(controlPaths.buffer.getChannelData(0));assert(report.controlPaths>0.0001&&Number.isFinite(report.controlPaths),'Control path audio is silent or invalid');
+  const pathBus=await new AudioEngine().render(compile("{s220v1e0'0.4}r0>8>0d.01>.1>.01f9>2>9"),false,1);report.pathBus=energy(pathBus.buffer.getChannelData(0));assert(report.pathBus>0&&Number.isFinite(report.pathBus),'Bus path audio is invalid');
   const source=`${layout} s220v1e0'1p[o1>2]`;
   const {buffer}=await new AudioEngine().render(compile(source),true,1);
   const channels=Array.from({length:buffer.numberOfChannels},(_,i)=>new Float32Array(buffer.getChannelData(i)));
