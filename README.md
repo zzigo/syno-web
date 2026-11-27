@@ -23,11 +23,13 @@ Use Node.js 24 and npm. GitHub authentication is required while the repository i
 ```sh
 gh repo clone zzigo/syno-web
 cd syno-web
-npm ci
+ONNXRUNTIME_NODE_INSTALL_CUDA=skip npm ci
 npm run dev
 ```
 
 Open `http://127.0.0.1:5190/`. Click Play or press Cmd/Ctrl+Enter to start audio. Microphone input requires the browser's permission on a secure context or localhost.
+
+The CUDA skip flag avoids an unnecessary ONNX native GPU download; browser speech uses WebAssembly/WebGPU instead. CI sets the same environment variable.
 
 The browser SDK and shared type contracts are snapshotted under [vendor](vendor), with checksums and MIT licensing. A sibling checkout is not required. This snapshot contains no inference server; local development forwards `/api/ai` to the existing gateway through Vite. Basic synthesis, editing, growth and offline audio rendering do not need that service. AI requires a reachable gateway and an installed model. Local Kokoro voice files download on first use; voice synthesis requires that runtime/model to be available.
 
